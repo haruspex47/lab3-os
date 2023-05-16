@@ -57,6 +57,9 @@ class GameNull : AppCompatActivity() {
             button.setOnClickListener { view -> onButtonClicked(view) }
         }
 
+        disableAllButtons()
+        // TODO: загрузка сервера - фронтенд
+
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val serverAddress = "10.0.2.2" // IP-адрес сервера
@@ -69,6 +72,9 @@ class GameNull : AppCompatActivity() {
                     reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
                     writer = PrintWriter(clientSocket.getOutputStream())
 
+                    writer.println("0") // !!!
+                    writer.flush()
+
                     // Получаем идентификатор игрока от сервера
                     val playerId = reader.readLine().toInt()
                     Log.d("Debug.", "Id ${playerId}")
@@ -76,6 +82,7 @@ class GameNull : AppCompatActivity() {
 
                     // Получаем загаданное число от сервера
                     guessedNumber = reader.readLine().toInt()
+                    Log.d("Debug", "Полученное загаднное число: ${guessedNumber}")
 
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
@@ -83,10 +90,14 @@ class GameNull : AppCompatActivity() {
                         tv = findViewById(R.id.currentPlayerTextView)
                         tv.text = "Сейчас ход игрока номер ${currentPlayer}"
 
-                        if (currentPlayer != player.id) {
-                            disableAllButtons()
+                        if (player.id != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока
                             waitForOtherPlayer()
+                        } else {
+                            for (button in buttons) {
+                                button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_red_light))
+                                button.isEnabled = true
+                            }
                         }
                     }
                 } else {
@@ -99,7 +110,7 @@ class GameNull : AppCompatActivity() {
         }
     }
 
-    // Добавляем новую функцию для ожидания ответа от другого игрока через сервер
+    // функция для ожидания ответа от другого игрока через сервер
     private fun waitForOtherPlayer() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
@@ -127,7 +138,7 @@ class GameNull : AppCompatActivity() {
         val button = view as Button
 
         // Проверка, что игра не окончена и кнопка еще не выбрана
-        if (!gameOver && button.isEnabled && currentPlayer == player.id) {
+        if (!gameOver && button.isEnabled) {
             val number = button.text.toString().toInt()
 
             // посылаем серверу число
