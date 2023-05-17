@@ -134,10 +134,12 @@ class GameNull : AppCompatActivity() {
                     exitToMenu()
                 }
                 if (response.toInt() == guessedNumber) {
-                    Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
-                    disableAllButtons()
+                    // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
                     gameOver = true
-                    showDialog()
+                    Log.d("Debug","Игрок не отключился, а выбрал правильное число")
+                    launch(Dispatchers.Main) {
+                        showDialog()
+                    }
                 }
                 var number = response.toInt()
                 Log.d("Debug","Игрок не отключился, а выбрал число ${number}")
@@ -180,7 +182,7 @@ class GameNull : AppCompatActivity() {
                     writer.println(number.toString())
                     writer.flush()
                     Log.d("Server", "На сервер отправлено число ${number}")
-                    // Обновите UI в основном потоке
+                    // UI в основном потоке
                     launch(Dispatchers.Main) {
                         // Проверка, угадана ли цифра
                         if (guessedNumber == number) {
