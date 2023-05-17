@@ -29,10 +29,10 @@ class Server {
             all_players[player.gm.id].add(player)
             if (all_players[player.gm.id].size == 2) {
                 var (p1, p2) = Pair(all_players[player.gm.id][0], all_players[player.gm.id][1])
-                println("Игрок ${p1.id} подключился")
-                p1.sendPlayerId(p1.id)
-                println("Игрок ${p2.id} подключился")
-                p2.sendPlayerId(p2.id)
+                println("Игрок ${p1.id} с почтой ${p2.email} подключился")
+                p1.sendPlayerId(p1.id, p2.email)
+                println("Игрок ${p2.id} с почтой ${p1.email} подключился")
+                p2.sendPlayerId(p2.id, p1.email)
                 p2.enemy = p1
                 p1.enemy = p2
                 guessedNumber = (1..9).random() // TODO: исправить
@@ -52,6 +52,7 @@ class Server {
         var gm: Game
         private val reader: BufferedReader
         private val writer: PrintWriter
+        val email: String
 
         var enemy: Player ? = null
 
@@ -60,12 +61,14 @@ class Server {
             writer = PrintWriter(clientSocket.getOutputStream(), true)
 
             gm = Game.fromInt(reader.readLine().toInt())
+            email = reader.readLine()
 
             id_count++
         }
 
-        fun sendPlayerId(id: Int) {
+        fun sendPlayerId(id: Int, email: String) {
             writer.println(id.toString())
+            writer.println(email)
         }
 
         fun sendGuessedNumber(number: Int) {
@@ -96,11 +99,23 @@ class Server {
             sendGuessedNumber(guessedNumber)
             while (true) {
                 println("Сервер ждёт выбранное число")
-                val number = reader.readLine().toInt()
+                val line = reader.readLine()
+                if (line == null) {
+                    println("fuck")
+                    val number = 0
+                    println("Игрок $id выбрал число $number")
+                    enemy?.sendOpponentNumber(number)
+                    break
+                }
+                val number = line.toInt()
                 println("Игрок $id выбрал число $number")
                 enemy?.sendOpponentNumber(number)
                 if (number == guessedNumber) {
                     println("Игрок $id угадал число!")
+                    var ans = reader.readLine().toInt()
+                    ans *= reader.readLine().toInt()
+                    writer.println(ans)
+                    writer.println(ans)
                     break
                 }
             }

@@ -3,7 +3,6 @@ package com.example.game
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +30,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
         val playButton: Button = findViewById(R.id.playButton)
         playButton.setOnClickListener {
-            startGame()
+            startGameNull()
         }
 
         //RegLogUser part
@@ -62,7 +61,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private fun startGame() {
+    private fun startGameNull() {
         val intent = Intent(this, GameNull::class.java)
         startActivity(intent)
         finish() // Закрываем меню после запуска игры

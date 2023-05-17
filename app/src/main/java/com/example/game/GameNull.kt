@@ -1,5 +1,6 @@
 package com.example.game;
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -20,6 +21,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+
 
 class GameNull : AppCompatActivity() {
     private lateinit var player: Player
@@ -33,6 +37,9 @@ class GameNull : AppCompatActivity() {
     private lateinit var clientSocket: Socket
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
+
+    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email
+    private lateinit var enemyEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,26 +81,32 @@ class GameNull : AppCompatActivity() {
 
                     writer.println("0") // !!!
                     writer.flush()
+                    writer.println(playerEmail)
+                    writer.flush()
 
                     // Получаем идентификатор игрока от сервера
                     val playerId = reader.readLine().toInt()
+                    enemyEmail = reader.readLine()
                     Log.d("Debug.", "Id ${playerId}")
-                    player = Player(playerId)
+                    player = Player(playerId, playerEmail)
 
                     // Получаем загаданное число от сервера
                     guessedNumber = reader.readLine().toInt()
                     Log.d("Debug", "Полученное загаднное число: ${guessedNumber}")
 
+
+
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTextView)
-                        tv.text = "Сейчас ход игрока номер ${currentPlayer}"
 
                         if (player.id != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока
+                            tv.text = "Сейчас ход игрока ${enemyEmail}"
                             waitForOtherPlayer()
                         } else {
+                            tv.text = "Сейчас ход игрока ${playerEmail}"
                             for (button in buttons) {
                                 button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_red_light))
                                 button.isEnabled = true
@@ -114,7 +127,20 @@ class GameNull : AppCompatActivity() {
     private fun waitForOtherPlayer() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val response = reader.readLine().toInt()
+                val response = reader.readLine()
+                if (response.toInt() == 0) {
+                    Log.d("Error","Игрок отключился")
+                    // TODO: сообщение о сожалении
+                    exitToMenu()
+                }
+                if (response.toInt() == guessedNumber) {
+                    Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
+                    disableAllButtons()
+                    gameOver = true
+                    showDialog()
+                }
+                var number = response.toInt()
+                Log.d("Debug","Игрок не отключился, а выбрал число ${number}")
 
                 // Обновляем UI в основном потоке
                 launch(Dispatchers.Main) {
@@ -125,12 +151,19 @@ class GameNull : AppCompatActivity() {
 
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
-                    tv.text = "Сейчас ход игрока номер ${currentPlayer}"
+                    tv.text = "Сейчас ход игрока " +
+                            if (currentPlayer == player.id + 1) playerEmail else enemyEmail
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun exitToMenu() {
+        val intent = Intent(this, MenuActivity::class.java)
+        startActivity(intent)
+        finish() // Закрываем меню после запуска игры
     }
 
 
@@ -179,7 +212,8 @@ class GameNull : AppCompatActivity() {
 
                                 // Смена текущего игрока
                                 currentPlayer = if (currentPlayer == 1) 2 else 1
-                                tv.text = "Сейчас ход игрока номер ${currentPlayer}"
+                                tv.text = "Сейчас ход игрока " +
+                                        if (currentPlayer == player.id + 1) playerEmail else enemyEmail
 
                                 disableAllButtons()
 
@@ -214,7 +248,7 @@ class GameNull : AppCompatActivity() {
             try {
                 // Получаем идентификатор игрока от сервера
                 val playerId = reader.readLine().toInt()
-                player = Player(playerId)
+                player = Player(playerId, null)
 
                 // Получаем загаданное число от сервера
                 guessedNumber = reader.readLine().toInt()
@@ -223,7 +257,8 @@ class GameNull : AppCompatActivity() {
                 launch(Dispatchers.Main) {
                     currentPlayer = 1
                     tv = findViewById(R.id.currentPlayerTextView)
-                    tv.text = "Сейчас ход игрока номер ${currentPlayer}"
+                    tv.text = "Сейчас ход игрока " +
+                            if (currentPlayer == player.id + 1) playerEmail else enemyEmail
 
                     if (currentPlayer != player.id) {
                         disableAllButtons()
@@ -237,13 +272,23 @@ class GameNull : AppCompatActivity() {
         }
     }
 
-    private inner class Player(val id: Int) {
+
+
+
+
+
+
+
+    private inner class Player(val id: Int, val email: String?) {
         var attemptsCount: Int = 0
 
         fun reset() {
             attemptsCount = 0
         }
     }
+
+
+
 
     fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
@@ -252,11 +297,22 @@ class GameNull : AppCompatActivity() {
             .setPositiveButton("Да") { dialog, id ->
                 // TODO: ждём реакции другого игрока. Игра перезапустится, только если оба будут за
                 // ...
-                resetGame()
-                dialog.dismiss()
+                writer.println("1")
+                writer.flush()
+                var ans = reader.readLine().toInt()
+                if(ans == 0) {
+                    // TODO: показать ещё окно
+                    dialog.dismiss()
+                    exitToMenu()
+                } else {
+                    resetGame()
+                    dialog.dismiss()
+                }
             }
             .setNegativeButton("Нет") { dialog, id ->
+                writer.println("0")
                 dialog.dismiss()
+                exitToMenu()
             }
 
         val alert = dialogBuilder.create()
