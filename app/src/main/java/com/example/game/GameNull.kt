@@ -1,5 +1,6 @@
 package com.example.game;
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -23,6 +24,14 @@ import kotlinx.coroutines.launch
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.io.IOException
+
+
+
+/*
+Общие TODO: Кнопка выхода в меню из игры @a1sarpi
+
+*/
 
 
 class GameNull : AppCompatActivity() {
@@ -38,7 +47,7 @@ class GameNull : AppCompatActivity() {
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
 
-    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email
+    private var playerEmail: String? = FirebaseAuth.getInstance().currentUser!!.email
     private lateinit var enemyEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +74,7 @@ class GameNull : AppCompatActivity() {
         }
 
         disableAllButtons()
-        // TODO: загрузка сервера - фронтенд
+        // TODO: загрузка сервера - фронтенд @a1sarpi
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
@@ -74,7 +83,7 @@ class GameNull : AppCompatActivity() {
 
                 clientSocket = Socket(serverAddress, serverPort)
                 if (clientSocket.isConnected) {
-                    Log.d("Server","Try to connect to the server.")
+                    Log.d("Server", "Try to connect to the server.")
 
                     reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
                     writer = PrintWriter(clientSocket.getOutputStream())
@@ -95,11 +104,12 @@ class GameNull : AppCompatActivity() {
                     Log.d("Debug", "Полученное загаднное число: ${guessedNumber}")
 
 
-
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
+                        // TODO: конец ожидания сервера (фронтенд) @a1sarpi
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTextView)
+
 
                         if (player.id != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока
@@ -107,15 +117,12 @@ class GameNull : AppCompatActivity() {
                             waitForOtherPlayer()
                         } else {
                             tv.text = "Сейчас ход игрока ${playerEmail}"
-                            for (button in buttons) {
-                                button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_red_light))
-                                button.isEnabled = true
-                            }
+                            enableAllButtons()
                         }
                     }
                 } else {
                     // Обработка ошибки подключения
-                    Log.d("Server","Failed to connect to the server.")
+                    Log.d("Server", "Failed to connect to the server.")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -129,28 +136,23 @@ class GameNull : AppCompatActivity() {
             try {
                 val response = reader.readLine()
                 if (response.toInt() == 0) {
-                    Log.d("Error","Игрок отключился")
-                    // TODO: сообщение о сожалении
+                    Log.d("Error", "Игрок отключился")
+                    // TODO: сообщение о сожалении @a1sarpi
                     exitToMenu()
                 }
                 if (response.toInt() == guessedNumber) {
                     // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
                     gameOver = true
-                    Log.d("Debug","Игрок не отключился, а выбрал правильное число")
+                    Log.d("Debug", "Игрок не отключился, а выбрал правильное число")
                     launch(Dispatchers.Main) {
                         showDialog()
                     }
                 }
                 var number = response.toInt()
-                Log.d("Debug","Игрок не отключился, а выбрал число ${number}")
 
                 // Обновляем UI в основном потоке
                 launch(Dispatchers.Main) {
-                    for (button in buttons) {
-                        button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_red_light))
-                        button.isEnabled = true
-                    }
-
+                    enableAllButtons()
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
                     tv.text = "Сейчас ход игрока " +
@@ -165,6 +167,9 @@ class GameNull : AppCompatActivity() {
     private fun exitToMenu() {
         val intent = Intent(this, MenuActivity::class.java)
         startActivity(intent)
+        clientSocket.close()
+        writer.close()
+        reader.close()
         finish() // Закрываем меню после запуска игры
     }
 
@@ -187,8 +192,17 @@ class GameNull : AppCompatActivity() {
                         // Проверка, угадана ли цифра
                         if (guessedNumber == number) {
                             // Игра окончена
-                            button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_green_light))
-                            Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
+                            button.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    this@GameNull,
+                                    android.R.color.holo_green_light
+                                )
+                            )
+                            Toast.makeText(
+                                this@GameNull,
+                                "Игра окончена. Игрок ${currentPlayer} победил!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             disableAllButtons()
                             gameOver = true
                             showDialog()
@@ -199,17 +213,36 @@ class GameNull : AppCompatActivity() {
                             // Ограничение на 3 попытки
                             if (player.attemptsCount ?: 0 > 3) {
                                 // Игра окончена без победителя
-                                button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_red_light))
-                                Toast.makeText(this@GameNull, "Игра окончена. Никто не победил!", Toast.LENGTH_SHORT).show()
+                                button.setBackgroundColor(
+                                    ContextCompat.getColor(
+                                        this@GameNull,
+                                        android.R.color.holo_red_light
+                                    )
+                                )
+                                Toast.makeText(
+                                    this@GameNull,
+                                    "Игра окончена. Никто не победил!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 disableAllButtons()
                                 gameOver = true
                                 showDialog()
                             } else {
                                 // Подсветка кнопки
                                 if (guessedNumber ?: 0 > number) {
-                                    button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_blue_light))
+                                    button.setBackgroundColor(
+                                        ContextCompat.getColor(
+                                            this@GameNull,
+                                            android.R.color.holo_blue_light
+                                        )
+                                    )
                                 } else {
-                                    button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_red_light))
+                                    button.setBackgroundColor(
+                                        ContextCompat.getColor(
+                                            this@GameNull,
+                                            android.R.color.holo_red_light
+                                        )
+                                    )
                                 }
 
                                 // Смена текущего игрока
@@ -237,11 +270,22 @@ class GameNull : AppCompatActivity() {
         }
     }
 
-    private fun resetGame() {
+    private fun enableAllButtons() {
         for (button in buttons) {
-            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_light))
+            button.setBackgroundColor(
+                ContextCompat.getColor(
+                    this@GameNull,
+                    android.R.color.holo_red_light
+                )
+            )
             button.isEnabled = true
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun resetGame() {
+        // TODO: ожидание сервера @a1sarpi
+        disableAllButtons()
 
         player.reset()
         gameOver = false
@@ -250,35 +294,36 @@ class GameNull : AppCompatActivity() {
             try {
                 // Получаем идентификатор игрока от сервера
                 val playerId = reader.readLine().toInt()
-                player = Player(playerId, null)
+                enemyEmail = reader.readLine()
+                Log.d("Debug.", "Id ${playerId}")
+                player = Player(playerId, playerEmail)
 
                 // Получаем загаданное число от сервера
                 guessedNumber = reader.readLine().toInt()
+                Log.d("Debug", "Полученное загаднное число: ${guessedNumber}")
+
 
                 // Обновляем UI в основном потоке
                 launch(Dispatchers.Main) {
+                    // TODO: конец ожидания сервера (фронтенд) @a1sarpi
                     currentPlayer = 1
                     tv = findViewById(R.id.currentPlayerTextView)
-                    tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == player.id + 1) playerEmail else enemyEmail
 
-                    if (currentPlayer != player.id) {
-                        disableAllButtons()
+
+                    if (player.id != 0) {
                         // Через сервер ждём ответ другого игрока
+                        tv.text = "Сейчас ход игрока ${enemyEmail}"
                         waitForOtherPlayer()
+                    } else {
+                        tv.text = "Сейчас ход игрока ${playerEmail}"
+                        enableAllButtons()
                     }
-                }
+                } // FIXME: жёсткое дублирование кода, но вроде бы этого не избежать
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-
-
-
-
-
-
 
 
     private inner class Player(val id: Int, val email: String?) {
@@ -290,34 +335,48 @@ class GameNull : AppCompatActivity() {
     }
 
 
-
-
-    fun showDialog() {
+    suspend fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setMessage("Начать новую игру?")
             .setCancelable(false)
             .setPositiveButton("Да") { dialog, id ->
-                // TODO: ждём реакции другого игрока. Игра перезапустится, только если оба будут за
-                // ...
-                writer.println("1")
-                writer.flush()
-                var ans = reader.readLine().toInt()
-                if(ans == 0) {
-                    // TODO: показать ещё окно
-                    dialog.dismiss()
-                    exitToMenu()
-                } else {
-                    resetGame()
-                    dialog.dismiss()
+                GlobalScope.launch(Dispatchers.IO) {
+                    sendData("${player.id}")
                 }
+                // TODO: показать ещё окно о переподключении @a1sarpi
+                resetGame()
             }
             .setNegativeButton("Нет") { dialog, id ->
-                writer.println("0")
+                GlobalScope.launch(Dispatchers.IO) {
+                    sendData("-1")
+                }
                 dialog.dismiss()
                 exitToMenu()
             }
 
         val alert = dialogBuilder.create()
         alert.show()
+    }
+
+    suspend fun sendData(message: String) {
+        try {
+            writer.println(message)
+            writer.flush()
+        } catch (e: IOException) {
+            // Обработайте ошибку отправки данных
+            e.printStackTrace()
+        }
+    }
+
+    override fun onBackPressed() {
+        exitToMenu()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        clientSocket.close()
+        writer.close()
+        reader.close()
     }
 }

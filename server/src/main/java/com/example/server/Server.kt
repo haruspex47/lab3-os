@@ -1,4 +1,4 @@
-package com.example.server;
+package com.example.server
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -8,15 +8,11 @@ import java.net.ServerSocket
 import java.net.Socket
 
 class Server {
-    private val serverSocket: ServerSocket
+    private val serverSocket: ServerSocket = ServerSocket(1234)
     private var guessedNumber: Int = 0
     private var all_players: Array<MutableList<Player>> = arrayOf(
         mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf())
     private var id_count: Int = 0
-
-    init {
-        serverSocket = ServerSocket(1234)
-    }
 
     fun start() {
         println("Сервер запущен. Ожидание подключений...")
@@ -24,27 +20,34 @@ class Server {
         println("Server is running on $address:${serverSocket.localPort}")
         while (true) {
             val clientSocket = serverSocket.accept()
-            // TODO: пусть игрок ждёт
             val player = Player(clientSocket)
             all_players[player.gm.id].add(player)
-            if (all_players[player.gm.id].size == 2) {
-                var (p1, p2) = Pair(all_players[player.gm.id][0], all_players[player.gm.id][1])
-                println("Игрок ${p1.id} с почтой ${p2.email} подключился")
-                p1.sendPlayerId(p1.id, p2.email)
-                println("Игрок ${p2.id} с почтой ${p1.email} подключился")
-                p2.sendPlayerId(p2.id, p1.email)
-                p2.enemy = p1
-                p1.enemy = p2
-                guessedNumber = (1..9).random() // TODO: исправить
-                println("Загадано число ${guessedNumber}")
-                Thread(p2).start()
-                Thread(p1).start()
-                println("Два врага найдены")
-            }
+            check_queue(player.gm.id, true)
         }
-        println("Игра началась")
     }
 
+    private fun check_queue(game_id: Int, flag: Boolean): Boolean {
+        println("Запущена проверка очереди. Размер очереди (должен быть 2): ${all_players[game_id].size}")
+        if (all_players[game_id].size == 2) {
+            val (p1, p2) = Pair(all_players[game_id][0], all_players[game_id][1])
+            all_players[game_id].clear()
+            println("Игрок ${p1.id} с почтой ${p2.email} подключился")
+            p1.sendPlayerId(p1.id, p2.email)
+            println("Игрок ${p2.id} с почтой ${p1.email} подключился")
+            p2.sendPlayerId(p2.id, p1.email)
+            p2.enemy = p1
+            p1.enemy = p2
+            guessedNumber = (1..9).random() // TODO: исправить
+            println("Загадано число ${guessedNumber}")
+
+            Thread(p2).start()
+            Thread(p1).start()
+
+            println("Два врага найдены")
+            println("Игра началась")
+            return true
+        } else return false
+    }
 
 
     private inner class Player(val clientSocket: Socket) : Runnable {
@@ -53,8 +56,8 @@ class Server {
         private val reader: BufferedReader
         private val writer: PrintWriter
         val email: String
-
-        var enemy: Player ? = null
+        var win: Boolean = false
+        lateinit var enemy: Player
 
         init {
             reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
@@ -87,7 +90,6 @@ class Server {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-            } finally {
                 reader.close()
                 writer.close()
                 clientSocket.close()
@@ -95,29 +97,57 @@ class Server {
         }
 
         fun rannum() {
-            // currentPlayer = players[0]
+            println("Игрок ${id} вошёл в игру")
+            win = false
+            enemy.win = false
             sendGuessedNumber(guessedNumber)
             while (true) {
                 println("Сервер ждёт выбранное число")
                 val line = reader.readLine()
+                if (enemy.win) {
+                    onWin(line.toInt())
+                    break
+                }
                 if (line == null) {
-                    println("fuck")
+                    println("fuckup")
                     val number = 0
                     println("Игрок $id выбрал число $number")
-                    enemy?.sendOpponentNumber(number)
+                    enemy.sendOpponentNumber(number)
+                    reader.close()
+                    writer.close()
+                    clientSocket.close()
+                    enemy.reader.close()
+                    enemy.writer.close()
+                    enemy.clientSocket.close()
                     break
                 }
                 val number = line.toInt()
                 println("Игрок $id выбрал число $number")
-                enemy?.sendOpponentNumber(number)
+                enemy.sendOpponentNumber(number)
                 if (number == guessedNumber) {
                     println("Игрок $id угадал число!")
-                    var ans = reader.readLine().toInt()
-                    ans *= reader.readLine().toInt()
-                    writer.println(ans)
-                    writer.println(ans)
+                    win = true
+                    val ans = reader.readLine().toInt()
+                    onWin(ans)
                     break
                 }
+            }
+        }
+
+        private fun onWin(ans: Int) {
+            println("Игрок на вопрос о начале новой игры ответил ${ans}")
+            if (ans == id) {
+                println("Размер очереди на данный момент равен ${all_players[gm.id].size}")
+                all_players[gm.id].add(this)
+                // TODO: возможность отключиться или кнопку выхода в меню @a1sarpi
+                Thread {
+                    // Код, выполняемый в ином потоке
+                    check_queue(gm.id, false)
+                }.start()
+            } else {
+                reader.close()
+                writer.close()
+                clientSocket.close()
             }
         }
     }

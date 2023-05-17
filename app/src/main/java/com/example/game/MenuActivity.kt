@@ -2,6 +2,7 @@ package com.example.game
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -62,6 +63,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private fun startGameNull() {
+        // TODO("Проверить, что игрок вошёл @a1sarpi")
         val intent = Intent(this, GameNull::class.java)
         startActivity(intent)
         finish() // Закрываем меню после запуска игры
