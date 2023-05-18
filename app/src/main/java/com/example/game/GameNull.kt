@@ -69,31 +69,6 @@ class GameNull : AppCompatActivity() {
 
     // Здесь я буду пытаться подключиться ко второй базе, чтобы записывать в нее результаты игр
 
-//     Manually configure Firebase Options. The following fields are REQUIRED:
-//       - Project ID
-//       - App ID
-//       - API Key
-    val options = FirebaseOptions.Builder()
-        .setProjectId("mygame-stats-afe14")
-        .setApplicationId("com.example.game")
-        .setApiKey("AIzaSyDZIn6XMDCDnOmv-bonoQuNMn0pjptWnvo")
-        .setDatabaseUrl("https://mygame-stats-afe14.firebaseio.com")
-        .build()
-
-    // Initialize secondary FirebaseApp.
-    //Firebase.initialize(context = this, options, "secondary")
-    val fb = Firebase.initialize(this, options, "secondary")
-
-    // Retrieve secondary FirebaseApp.
-    private val secondary = Firebase.app("secondary")
-    // Get the database for the other app.
-    val secondaryDatabase = FirebaseDatabase.getInstance(secondary)
-
-
-    var ref: DatabaseReference = secondaryDatabase.reference
-    var userToAddRef: DatabaseReference = ref.child("users").child("IIWEF")
-
-    // Конец попытки подключения
 
     private lateinit var enemyEmail: String
 
