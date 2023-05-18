@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.FirebaseOptions
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -32,6 +33,23 @@ import java.io.IOException
 Общие TODO: Кнопка выхода в меню из игры @a1sarpi
 
 */
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
+import com.google.firebase.ktx.initialize
+
+//Еще один мой кусок
+class User() {
+    private var wins: Int = 0
+    private var loses: Int = 0
+    private var draws: Int = 0
+    constructor(pWins: Int, pLoses: Int, pDraws: Int) : this() {
+        this.wins += pWins
+        this.loses += pLoses
+        this.draws += pDraws
+    }
+}
 
 
 class GameNull : AppCompatActivity() {
@@ -47,7 +65,36 @@ class GameNull : AppCompatActivity() {
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
 
-    private var playerEmail: String? = FirebaseAuth.getInstance().currentUser!!.email
+    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
+
+    // Здесь я буду пытаться подключиться ко второй базе, чтобы записывать в нее результаты игр
+
+//     Manually configure Firebase Options. The following fields are REQUIRED:
+//       - Project ID
+//       - App ID
+//       - API Key
+    val options = FirebaseOptions.Builder()
+        .setProjectId("mygame-stats-afe14")
+        .setApplicationId("com.example.game")
+        .setApiKey("AIzaSyDZIn6XMDCDnOmv-bonoQuNMn0pjptWnvo")
+        .setDatabaseUrl("https://mygame-stats-afe14.firebaseio.com")
+        .build()
+
+    // Initialize secondary FirebaseApp.
+    //Firebase.initialize(context = this, options, "secondary")
+    val fb = Firebase.initialize(this, options, "secondary")
+
+    // Retrieve secondary FirebaseApp.
+    private val secondary = Firebase.app("secondary")
+    // Get the database for the other app.
+    val secondaryDatabase = FirebaseDatabase.getInstance(secondary)
+
+
+    var ref: DatabaseReference = secondaryDatabase.reference
+    var userToAddRef: DatabaseReference = ref.child("users").child("IIWEF")
+
+    // Конец попытки подключения
+
     private lateinit var enemyEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,7 +160,7 @@ class GameNull : AppCompatActivity() {
 
                         if (player.id != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока
-                            tv.text = "Сейчас ход игрока ${enemyEmail}"
+                            tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
                             waitForOtherPlayer()
                         } else {
                             tv.text = "Сейчас ход игрока ${playerEmail}"
@@ -156,7 +203,7 @@ class GameNull : AppCompatActivity() {
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
                     tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == player.id + 1) playerEmail else enemyEmail
+                            if (currentPlayer == player.id + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -213,6 +260,16 @@ class GameNull : AppCompatActivity() {
                             // Ограничение на 3 попытки
                             if (player.attemptsCount ?: 0 > 3) {
                                 // Игра окончена без победителя
+                                button.setBackgroundColor(ContextCompat.getColor(this@GameNull, android.R.color.holo_red_light))
+                                Toast.makeText(this@GameNull, "Игра окончена. Никто не победил!", Toast.LENGTH_SHORT).show()
+
+                                // Здесь я буду пытаться записать во вторую базу данных результаты
+//
+//                                var ref: DatabaseReference = secondaryDatabase.reference
+//                                var userToAddRef: DatabaseReference = ref.child("users").child(playerEmail.removeSuffix("@whatever.ru"))
+//                                var new_user: User = User(0, 0, 1);
+//                                userToAddRef(new_user)
+
                                 button.setBackgroundColor(
                                     ContextCompat.getColor(
                                         this@GameNull,
@@ -308,6 +365,8 @@ class GameNull : AppCompatActivity() {
                     // TODO: конец ожидания сервера (фронтенд) @a1sarpi
                     currentPlayer = 1
                     tv = findViewById(R.id.currentPlayerTextView)
+                    tv.text = "Сейчас ход игрока " +
+                            if (currentPlayer == player.id + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
 
 
                     if (player.id != 0) {

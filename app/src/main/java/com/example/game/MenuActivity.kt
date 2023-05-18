@@ -8,8 +8,14 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
+import com.google.firebase.ktx.initialize
 
 
 class MenuActivity : AppCompatActivity(), View.OnClickListener {
@@ -17,7 +23,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var auth: FirebaseAuth;
     private lateinit var button: Button;
     private lateinit var textView: TextView;
-    private lateinit var user: FirebaseUser;
+    private  var user: FirebaseUser? = null;
 
     private var animationView: LottieAnimationView? = null
 
@@ -39,14 +45,15 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         auth = FirebaseAuth.getInstance();
         button = findViewById(R.id.logout);
         textView = findViewById(R.id.user_details);
-        user = auth.currentUser!!;
+        user = auth.currentUser;
         if (user == null) {
             val intent = Intent(applicationContext, Login::class.java);
             startActivity(intent);
             finish();
         }
         else {
-            textView.text = user.email;
+            val text = user!!.email?.removeSuffix("@whatever.ru")
+            textView.text = text;
         }
         button.setOnClickListener(View.OnClickListener {
             onClick(it);

@@ -66,7 +66,7 @@ public class Login extends AppCompatActivity {
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
 
-                if (TextUtils.isEmpty(email)) {
+                if (TextUtils.isEmpty(email + "@whatever.ru")) {
                     Toast.makeText(Login.this, "Enter email", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -76,7 +76,7 @@ public class Login extends AppCompatActivity {
                     return;
                 }
 
-                mAuth.signInWithEmailAndPassword(email, password)
+                mAuth.signInWithEmailAndPassword(email + "@whatever.ru", password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {

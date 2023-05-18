@@ -68,7 +68,7 @@ public class Register extends AppCompatActivity {
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
 
-                if(TextUtils.isEmpty(email)) {
+                if(TextUtils.isEmpty(email + "@whatever.ru")) {
                     Toast.makeText(Register.this, "Enter email", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -78,7 +78,7 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
-                mAuth.createUserWithEmailAndPassword(email, password)
+                mAuth.createUserWithEmailAndPassword(email + "@whatever.ru", password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
