@@ -73,25 +73,25 @@ class GameNull : AppCompatActivity() {
 //       - Project ID
 //       - App ID
 //       - API Key
-    val options = FirebaseOptions.Builder()
-        .setProjectId("mygame-stats-afe14")
-        .setApplicationId("com.example.game")
-        .setApiKey("AIzaSyDZIn6XMDCDnOmv-bonoQuNMn0pjptWnvo")
-        .setDatabaseUrl("https://mygame-stats-afe14.firebaseio.com")
-        .build()
-
-    // Initialize secondary FirebaseApp.
-    //Firebase.initialize(context = this, options, "secondary")
-    val fb = Firebase.initialize(this, options, "secondary")
-
-    // Retrieve secondary FirebaseApp.
-    private val secondary = Firebase.app("secondary")
-    // Get the database for the other app.
-    val secondaryDatabase = FirebaseDatabase.getInstance(secondary)
-
-
-    var ref: DatabaseReference = secondaryDatabase.reference
-    var userToAddRef: DatabaseReference = ref.child("users").child("IIWEF")
+//    val options = FirebaseOptions.Builder()
+//        .setProjectId("mygame-stats-afe14")
+//        .setApplicationId("com.example.game")
+//        .setApiKey("AIzaSyDZIn6XMDCDnOmv-bonoQuNMn0pjptWnvo")
+//        .setDatabaseUrl("https://mygame-stats-afe14.firebaseio.com")
+//        .build()
+//
+//    // Initialize secondary FirebaseApp.
+//    //Firebase.initialize(context = this, options, "secondary")
+//    val fb = Firebase.initialize(this, options, "secondary")
+//
+//    // Retrieve secondary FirebaseApp.
+//    private val secondary = Firebase.app("secondary")
+//    // Get the database for the other app.
+//    val secondaryDatabase = FirebaseDatabase.getInstance(secondary)
+//
+//
+//    var ref: DatabaseReference = secondaryDatabase.reference
+//    var userToAddRef: DatabaseReference = ref.child("users").child("IIWEF")
 
     // Конец попытки подключения
 
@@ -158,7 +158,7 @@ class GameNull : AppCompatActivity() {
                         tv = findViewById(R.id.currentPlayerTextView)
 
 
-                        if (player.id != 0) {    // if (currentPlayer != player.id + 1) {
+                        if ((player.id%2) != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока
                             tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
                             waitForOtherPlayer()
@@ -203,7 +203,7 @@ class GameNull : AppCompatActivity() {
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
                     tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == player.id + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
+                            if (currentPlayer == (player.id%2) + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -305,7 +305,7 @@ class GameNull : AppCompatActivity() {
                                 // Смена текущего игрока
                                 currentPlayer = if (currentPlayer == 1) 2 else 1
                                 tv.text = "Сейчас ход игрока " +
-                                        if (currentPlayer == player.id + 1) playerEmail else enemyEmail
+                                        if (currentPlayer == (player.id%2) + 1) playerEmail else enemyEmail
 
                                 disableAllButtons()
 
@@ -366,10 +366,10 @@ class GameNull : AppCompatActivity() {
                     currentPlayer = 1
                     tv = findViewById(R.id.currentPlayerTextView)
                     tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == player.id + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
+                            if (currentPlayer == (player.id%2) + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
 
 
-                    if (player.id != 0) {
+                    if ((player.id%2) != 0) {
                         // Через сервер ждём ответ другого игрока
                         tv.text = "Сейчас ход игрока ${enemyEmail}"
                         waitForOtherPlayer()
