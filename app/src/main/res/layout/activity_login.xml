@@ -5,12 +5,15 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:padding="15dp"
+    android:background="#cbffcc"
     android:gravity="center"
     android:layout_height="match_parent"
     tools:context=".Login">
 
     <TextView
         android:text="@string/login"
+        android:textColor="#ff4d00"
+        android:fontFamily="@font/castorotitlingregular"
         android:textSize="35sp"
         android:layout_marginBottom="20dp"
         android:textStyle="bold"
@@ -55,12 +58,24 @@
         android:padding="15dp"/>
 
     <TextView
+        android:id="@+id/glowingText"
+        android:text="У вас еще нет аккаунта?"
+        android:shadowColor="#cf1d1d"
+        android:shadowDx="0.0"
+        android:shadowDy="0.0"
+        android:shadowRadius="8"
+        android:textColor="#cf1d1d"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:padding="15dp"
+        />
+
+    <TextView
         android:id="@+id/registerNow"
         android:text="@string/click_to_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:gravity="center"/>
 

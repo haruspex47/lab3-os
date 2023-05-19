@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +28,18 @@ public class Login extends AppCompatActivity {
     FirebaseAuth mAuth;
     ProgressBar progressBar;
     TextView textView;
+
+//    FirebaseOptions options = new FirebaseOptions.Builder()
+//            .setApplicationId("1:531062256335:android:d0909833c6017090e7fdba")
+//            .setApiKey("AIzaSyAt1njugd78ANSSXqLroml9d22Ujz6c6HQ")
+//            .setDatabaseUrl("https://osdatabase-2a526-default-rtdb.firebaseio.com/")
+//            .build();
+//
+//    // Initialize with secondary app
+//    FirebaseApp app = FirebaseApp.initializeApp(getApplicationContext(), options, "secondary");
+//
+//    // Retrieve secondary FirebaseApp
+//    FirebaseApp secondary = FirebaseApp.getInstance("secondary");
 
     @Override
     public void onStart() {
@@ -43,7 +57,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance(/*secondary*/);
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         buttonLogin = findViewById(R.id.btn_login);

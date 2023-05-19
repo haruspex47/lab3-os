@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">My Game</string>
-    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_menu">Меню</string>
     <string name="login">Login</string>
-    <string name="email">nickname</string>
-    <string name="password">password</string>
-    <string name="register">Register</string>
-    <string name="click_to_login">Click To Login</string>
-    <string name="click_to_register">Click To Register</string>
+    <string name="email">Имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="register">Регистрация</string>
+    <string name="click_to_login">Нажмите для входа</string>
+    <string name="click_to_register">Нажмите для регистрации</string>
     <string name="logout">Выйти</string>
 </resources>

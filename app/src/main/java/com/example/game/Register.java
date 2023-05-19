@@ -16,9 +16,15 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.ktx.Firebase;
+import com.google.firebase.tracing.FirebaseTrace;
 
 public class Register extends AppCompatActivity {
 
@@ -29,11 +35,27 @@ public class Register extends AppCompatActivity {
 
     TextView textView;
 
+/*    FirebaseOptions options = new FirebaseOptions.Builder()
+            .setApplicationId("1:531062256335:android:d0909833c6017090e7fdba")
+            .setApiKey("AIzaSyAt1njugd78ANSSXqLroml9d22Ujz6c6HQ")
+            .setDatabaseUrl("https://osdatabase-2a526.firebaseio.com/")
+            .build();
+
+    // Initialize with secondary app
+    FirebaseApp app = FirebaseApp.initializeApp(getApplicationContext(), options, "secondary");
+
+    // Retrieve secondary FirebaseApp
+    FirebaseApp secondary = FirebaseApp.getInstance("secondary");*/
+
     @Override
     public void onStart() {
         super.onStart();
+
+        mAuth = FirebaseAuth.getInstance(/*secondary*/);
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+
+        if(currentUser != null) {
             Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
             startActivity(intent);
             finish();
