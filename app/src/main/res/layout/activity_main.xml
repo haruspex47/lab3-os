@@ -13,6 +13,8 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="Player 1's turn"
+        android:fontFamily="@font/zerocool"
+        android:textColor="#FF6392"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -23,6 +25,8 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="Добро пожаловать!"
+        android:fontFamily="@font/zerocool"
+        android:textColor="#FF6392"
         app:layout_constraintTop_toBottomOf="@id/currentPlayerTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -31,6 +35,7 @@
         layout="@layout/button_number"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="10sp"
         app:layout_constraintTop_toBottomOf="@id/gameOverTextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">My Game</string>
     <string name="title_activity_menu">Меню</string>
-    <string name="login">Login</string>
+    <string name="login">ВХОД</string>
     <string name="email">Имя пользователя</string>
     <string name="password">Пароль</string>
     <string name="register">Регистрация</string>

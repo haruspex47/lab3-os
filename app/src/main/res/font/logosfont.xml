@@ -6,6 +6,11 @@
     <font
         android:fontStyle="normal"
         android:fontWeight="400"
-        android:font="@font/castorotitlingregular"
+        android:font="@font/zerocool"
+        />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/zerocool"
         />
 </font-family>
