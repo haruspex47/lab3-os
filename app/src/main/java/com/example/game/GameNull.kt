@@ -53,7 +53,7 @@ class GameNull : AppCompatActivity() {
     private var gameOver: Boolean = false
     var guessedNumber: Int = 0
     var button_cls: Button = findViewById(R.id.logout)
-    // TODO: Надо где-нибудь обработать нажатие этой кнопки (при нажатии должно закрываться и переходить в меню)
+
 
     private lateinit var tv: TextView
 
@@ -68,6 +68,10 @@ class GameNull : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        button_cls.setOnClickListener(View.OnClickListener {
+            exitToMenu()
+        })
 
         // Получение ссылок на кнопки
         buttons = arrayOf(
