@@ -44,9 +44,9 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        animationView = findViewById(R.id.animationView)
+   /*     animationView = findViewById(R.id.animationView)
         animationView?.setAnimation(R.raw.tumbnail)
-        animationView?.playAnimation()
+        animationView?.playAnimation() */
 
         val playButton: Button = findViewById(R.id.playButton)
         playButton.setOnClickListener {
