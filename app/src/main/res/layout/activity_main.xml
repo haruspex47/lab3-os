@@ -35,10 +35,12 @@
         layout="@layout/button_number"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="10sp"
-        app:layout_constraintTop_toBottomOf="@id/gameOverTextView"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/gameOverTextView"
+        app:layout_constraintVertical_bias="0.244"
+        android:layout_marginTop="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

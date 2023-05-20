@@ -108,7 +108,6 @@
         android:fontFamily="@font/zerocool"
         android:textSize="36sp"
         android:background="@drawable/button_selector"
-        android:background="@drawable/button_selector"
         android:padding="16dp"
         android:layout_columnWeight="1"
         android:layout_rowWeight="1"/>

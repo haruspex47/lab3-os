@@ -67,9 +67,6 @@ class GameNull : AppCompatActivity() {
 
     private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
 
-    // Здесь я буду пытаться подключиться ко второй базе, чтобы записывать в нее результаты игр
-
-
     private lateinit var enemyEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
