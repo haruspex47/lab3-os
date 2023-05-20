@@ -8,4 +8,6 @@
     <string name="click_to_login">Click To Login</string>
     <string name="click_to_register">Click To Register</string>
     <string name="logout">Выйти</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_custom_button">CustomButton</string>
 </resources>

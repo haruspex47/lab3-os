@@ -1,6 +1,7 @@
 package com.example.game;
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -12,7 +13,6 @@ import androidx.core.content.ContextCompat
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import com.google.firebase.FirebaseOptions
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -24,40 +24,37 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import java.io.IOException
-
 
 
 /*
 Общие TODO: Кнопка выхода в меню из игры @a1sarpi
 
 */
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
-import com.google.firebase.ktx.initialize
+
 
 //Еще один мой кусок
-class User() {
-    private var wins: Int = 0
-    private var loses: Int = 0
-    private var draws: Int = 0
-    constructor(pWins: Int, pLoses: Int, pDraws: Int) : this() {
-        this.wins += pWins
-        this.loses += pLoses
-        this.draws += pDraws
-    }
-}
+//class User() {
+//    private var wins: Int = 0
+//    private var loses: Int = 0
+//    private var draws: Int = 0
+//    constructor(pWins: Int, pLoses: Int, pDraws: Int) : this() {
+//        this.wins += pWins
+//        this.loses += pLoses
+//        this.draws += pDraws
+//    }
+//}
 
 
 class GameNull : AppCompatActivity() {
+    val GAME_ID = "0"
     private lateinit var player: Player
     private lateinit var buttons: Array<Button>
     private var currentPlayer: Int = 1
     private var gameOver: Boolean = false
     var guessedNumber: Int = 0
+    //var button_cls: Button = findViewById(R.id.logout)
+
 
     private lateinit var tv: TextView
 
@@ -65,41 +62,18 @@ class GameNull : AppCompatActivity() {
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
 
-    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
+    //private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
+    private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
 
-    // Здесь я буду пытаться подключиться ко второй базе, чтобы записывать в нее результаты игр
-
-//     Manually configure Firebase Options. The following fields are REQUIRED:
-//       - Project ID
-//       - App ID
-//       - API Key
-//    val options = FirebaseOptions.Builder()
-//        .setProjectId("mygame-stats-afe14")
-//        .setApplicationId("com.example.game")
-//        .setApiKey("AIzaSyDZIn6XMDCDnOmv-bonoQuNMn0pjptWnvo")
-//        .setDatabaseUrl("https://mygame-stats-afe14.firebaseio.com")
-//        .build()
-//
-//    // Initialize secondary FirebaseApp.
-//    //Firebase.initialize(context = this, options, "secondary")
-//    val fb = Firebase.initialize(this, options, "secondary")
-//
-//    // Retrieve secondary FirebaseApp.
-//    private val secondary = Firebase.app("secondary")
-//    // Get the database for the other app.
-//    val secondaryDatabase = FirebaseDatabase.getInstance(secondary)
-//
-//
-//    var ref: DatabaseReference = secondaryDatabase.reference
-//    var userToAddRef: DatabaseReference = ref.child("users").child("IIWEF")
-
-    // Конец попытки подключения
-
-    private lateinit var enemyEmail: String
+        private lateinit var enemyEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+//        button_cls.setOnClickListener(View.OnClickListener {
+//            exitToMenu()
+//        })
 
         // Получение ссылок на кнопки
         buttons = arrayOf(
@@ -122,7 +96,6 @@ class GameNull : AppCompatActivity() {
 
         disableAllButtons()
         // TODO: загрузка сервера - фронтенд @a1sarpi
-
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val serverAddress = "10.0.2.2" // IP-адрес сервера
@@ -135,7 +108,7 @@ class GameNull : AppCompatActivity() {
                     reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
                     writer = PrintWriter(clientSocket.getOutputStream())
 
-                    writer.println("0") // !!!
+                    writer.println(GAME_ID) // !!!
                     writer.flush()
                     writer.println(playerEmail)
                     writer.flush()
@@ -158,7 +131,7 @@ class GameNull : AppCompatActivity() {
                         tv = findViewById(R.id.currentPlayerTextView)
 
 
-                        if ((player.id%2) != 0) {    // if (currentPlayer != player.id + 1) {
+                        if (player.id != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока
                             tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
                             waitForOtherPlayer()
@@ -185,12 +158,24 @@ class GameNull : AppCompatActivity() {
                 if (response.toInt() == 0) {
                     Log.d("Error", "Игрок отключился")
                     // TODO: сообщение о сожалении @a1sarpi
-                    exitToMenu()
+
+                    //Тоже надеюсь что правильно сделал, не было возможности проверить
+
+//                    AlertDialog.Builder(applicationContext)
+//                        .setTitle("Игрок отключился")
+//                        .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener() { dialogInterface: DialogInterface, i: Int ->
+//                            fun onClick(dialog: DialogInterface, which: Int) {
+//                                exitToMenu()
+//                            }
+//                        })
+
+                    //Тоже надеюсь что правильно сделал, не было возможности проверить
+
                 }
                 if (response.toInt() == guessedNumber) {
                     // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
                     gameOver = true
-                    Log.d("Debug", "Игрок не отключился, а выбрал правильное число")
+                    Log.d("Debug", "Игрок выбрал правильное число")
                     launch(Dispatchers.Main) {
                         showDialog()
                     }
@@ -203,7 +188,7 @@ class GameNull : AppCompatActivity() {
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
                     tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == (player.id%2) + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
+                            if (currentPlayer == player.id + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -301,11 +286,10 @@ class GameNull : AppCompatActivity() {
                                         )
                                     )
                                 }
-
                                 // Смена текущего игрока
                                 currentPlayer = if (currentPlayer == 1) 2 else 1
                                 tv.text = "Сейчас ход игрока " +
-                                        if (currentPlayer == (player.id%2) + 1) playerEmail else enemyEmail
+                                        if (currentPlayer == player.id + 1) playerEmail else enemyEmail
 
                                 disableAllButtons()
 
@@ -342,6 +326,10 @@ class GameNull : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun resetGame() {
         // TODO: ожидание сервера @a1sarpi
+        // Так..?
+        //val intent = Intent(this, SplashScreen::class.java)
+        //startActivity(intent)
+
         disableAllButtons()
 
         player.reset()
@@ -363,13 +351,14 @@ class GameNull : AppCompatActivity() {
                 // Обновляем UI в основном потоке
                 launch(Dispatchers.Main) {
                     // TODO: конец ожидания сервера (фронтенд) @a1sarpi
+                    //finish() // КОНЕЦ ожидания
                     currentPlayer = 1
                     tv = findViewById(R.id.currentPlayerTextView)
                     tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == (player.id%2) + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
+                            if (currentPlayer == player.id + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
 
 
-                    if ((player.id%2) != 0) {
+                    if (player.id != 0) {
                         // Через сервер ждём ответ другого игрока
                         tv.text = "Сейчас ход игрока ${enemyEmail}"
                         waitForOtherPlayer()
@@ -378,6 +367,7 @@ class GameNull : AppCompatActivity() {
                         enableAllButtons()
                     }
                 } // FIXME: жёсткое дублирование кода, но вроде бы этого не избежать
+                // Да забей, норм мне кажется
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -393,7 +383,6 @@ class GameNull : AppCompatActivity() {
         }
     }
 
-
     suspend fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setMessage("Начать новую игру?")
@@ -403,7 +392,21 @@ class GameNull : AppCompatActivity() {
                     sendData("${player.id}")
                 }
                 // TODO: показать ещё окно о переподключении @a1sarpi
-                resetGame()
+
+                // Еще одна попытка написать что-то вменяемое
+
+//                AlertDialog.Builder(applicationContext)
+//                    .setTitle("Пытаемся переподключиться")
+//                    .setPositiveButton(android.R.string.yes, DialogInterface.OnClickListener() { dialogInterface: DialogInterface, i: Int ->
+//                        fun onClick(dialog: DialogInterface, which: Int) {
+//                            resetGame()
+//                        }
+//                    })
+
+                // Еще одна попытка написать что-то вменяемое
+
+
+                //resetGame()
             }
             .setNegativeButton("Нет") { dialog, id ->
                 GlobalScope.launch(Dispatchers.IO) {
@@ -422,7 +425,7 @@ class GameNull : AppCompatActivity() {
             writer.println(message)
             writer.flush()
         } catch (e: IOException) {
-            // Обработайте ошибку отправки данных
+            // ошибка отправки данных
             e.printStackTrace()
         }
     }

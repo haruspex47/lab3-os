@@ -31,6 +31,8 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
+        Log.d("Debug", "Привет, мир!")
+
         animationView = findViewById(R.id.animationView)
         animationView?.setAnimation(R.raw.tumbnail)
         animationView?.playAnimation()
@@ -40,21 +42,25 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
             startGameNull()
         }
 
-        //RegLogUser part
+        val quizButton: Button = findViewById(R.id.quizButton)
+        quizButton.setOnClickListener {
+            startQuiz()
+        }
 
+        // RegLogUser part
         auth = FirebaseAuth.getInstance();
         button = findViewById(R.id.logout);
         textView = findViewById(R.id.user_details);
         user = auth.currentUser;
-        if (user == null) {
-            val intent = Intent(applicationContext, Login::class.java);
-            startActivity(intent);
-            finish();
-        }
-        else {
-            val text = user!!.email?.removeSuffix("@whatever.ru")
-            textView.text = text;
-        }
+//        if (user == null) {
+//            val intent = Intent(applicationContext, Login::class.java);
+//            startActivity(intent);
+//            finish();
+//        }
+//        else {
+//            val text = user!!.email?.removeSuffix("@whatever.ru")
+//            textView.text = text;
+//        }
         button.setOnClickListener(View.OnClickListener {
             onClick(it);
         });
@@ -70,13 +76,18 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private fun startGameNull() {
-        // TODO("Проверить, что игрок вошёл @a1sarpi")
+        Log.d("Debug", "Вход в игру 'Угадай число'!")
         val intent = Intent(this, GameNull::class.java)
         startActivity(intent)
         finish() // Закрываем меню после запуска игры
     }
 
-
+    private fun startQuiz() {
+        Log.d("Debug", "Вход в игру 'Викторина'!")
+        val intent = Intent(this, Quiz::class.java)
+        startActivity(intent)
+        finish()
+    }
 }
 
 
