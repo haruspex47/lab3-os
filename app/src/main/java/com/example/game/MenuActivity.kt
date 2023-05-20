@@ -24,7 +24,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var textView: TextView;
     private  var user: FirebaseUser? = null;
 
-    private var animationView: LottieAnimationView? = null
+//    private var animationView: LottieAnimationView? = null
 
 /*    public val options = FirebaseOptions.Builder()
         .setApplicationId("1:531062256335:android:d0909833c6017090e7fdba")

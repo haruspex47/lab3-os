@@ -11,25 +11,28 @@
         android:id="@+id/currentPlayerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Player 1's turn"
+        android:layout_marginTop="4dp"
         android:fontFamily="@font/zerocool"
+        android:text="Player 1's turn"
         android:textColor="#FF6392"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/gameOverTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Добро пожаловать!"
         android:fontFamily="@font/zerocool"
+        android:text="Добро пожаловать!"
         android:textColor="#FF6392"
-        app:layout_constraintTop_toBottomOf="@id/currentPlayerTextView"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/currentPlayerTextView" />
 
     <include
         layout="@layout/button_number"
@@ -42,5 +45,16 @@
         app:layout_constraintTop_toBottomOf="@id/gameOverTextView"
         app:layout_constraintVertical_bias="0.244"
         android:layout_marginTop="10dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FFE45E"
+        android:fontFamily="@font/zerocool"
+        android:text="@string/logout"
+        android:textSize="20dp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="262dp"
+        tools:layout_editor_absoluteY="3dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

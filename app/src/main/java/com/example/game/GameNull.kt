@@ -2,7 +2,6 @@ package com.example.game;
 
 import SplashScreen
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -27,7 +26,6 @@ import kotlinx.coroutines.launch
 
 import com.google.firebase.auth.FirebaseAuth
 import java.io.IOException
-import java.nio.file.Files.delete
 
 
 /*
@@ -54,6 +52,8 @@ class GameNull : AppCompatActivity() {
     private var currentPlayer: Int = 1
     private var gameOver: Boolean = false
     var guessedNumber: Int = 0
+    var button_cls: Button = findViewById(R.id.logout)
+    // TODO: Надо где-нибудь обработать нажатие этой кнопки (при нажатии должно закрываться и переходить в меню)
 
     private lateinit var tv: TextView
 
@@ -284,7 +284,6 @@ class GameNull : AppCompatActivity() {
                                         )
                                     )
                                 }
-
                                 // Смена текущего игрока
                                 currentPlayer = if (currentPlayer == 1) 2 else 1
                                 tv.text = "Сейчас ход игрока " +
@@ -381,7 +380,6 @@ class GameNull : AppCompatActivity() {
             attemptsCount = 0
         }
     }
-
 
     suspend fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
