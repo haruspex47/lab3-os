@@ -19,8 +19,6 @@
         android:layout_columnWeight="1"
         android:layout_rowWeight="1"/>
 
-    <!-- Добавьте остальные кнопки (button2, button3, и т.д.) с аналогичной разметкой -->
-
     <Button
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/button2"

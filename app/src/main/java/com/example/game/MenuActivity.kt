@@ -2,13 +2,12 @@ package com.example.game
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ktx.database
@@ -48,14 +47,18 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         animationView?.setAnimation(R.raw.tumbnail)
         animationView?.playAnimation() */
 
-        val playButton: Button = findViewById(R.id.playButton)
-        playButton.setOnClickListener {
+        val rannumButton: Button = findViewById(R.id.playButton)
+        rannumButton.setOnClickListener {
             startGameNull()
+        }
+        val quizButton: Button = findViewById(R.id.quizButton)
+        quizButton.setOnClickListener {
+            startQuiz()
         }
 
         //RegLogUser part
 
-        auth = FirebaseAuth.getInstance(/*secondary*/);
+        auth = FirebaseAuth.getInstance();
         button = findViewById(R.id.logout);
         textView = findViewById(R.id.user_details);
         user = auth.currentUser;
@@ -89,6 +92,12 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         finish() // Закрываем меню после запуска игры
     }
 
+    private fun startQuiz() {
+        val intent = Intent(this, Quiz::class.java)
+        startActivity(intent)
+        Log.d("Debug", "Пытаюсь зайти в викторину")
+        finish()
+    }
 
 }
 

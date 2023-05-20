@@ -27,6 +27,12 @@
         android:backgroundTint="#FFE45E"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Играть!" />
+    <Button
+        android:id="@+id/quizButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Играть в викторину!" />
         android:layout_margin="10dp"
         android:text="Играть!"
         android:textSize="20sp"
@@ -66,6 +72,14 @@
         android:src="@drawable/tuzik"
         android:translationY="70sp"
         />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/tumbnail" />
 
 
 </LinearLayout>

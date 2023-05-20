@@ -33,6 +33,7 @@ import java.io.IOException
 
 */
 
+
 //Еще один мой кусок
 //class User() {
 //    private var wins: Int = 0
@@ -47,6 +48,7 @@ import java.io.IOException
 
 
 class GameNull : AppCompatActivity() {
+    val GAME_ID = "0"
     private lateinit var player: Player
     private lateinit var buttons: Array<Button>
     private var currentPlayer: Int = 1
@@ -109,7 +111,7 @@ class GameNull : AppCompatActivity() {
                     reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
                     writer = PrintWriter(clientSocket.getOutputStream())
 
-                    writer.println("0") // !!!
+                    writer.println(GAME_ID) // !!!
                     writer.flush()
                     writer.println(playerEmail)
                     writer.flush()

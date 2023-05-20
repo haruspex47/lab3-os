@@ -13,16 +13,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:fontFamily="@font/zerocool"
-        android:text="Player 1's turn"
+        android:text="Ожидается подключение второго игрока..."
         android:textColor="#FF6392"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.003"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.003"></TextView>
 
     <TextView
-        android:id="@+id/gameOverTextView"
+        android:id="@+id/welcomeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/zerocool"
@@ -38,11 +36,11 @@
         layout="@layout/button_number"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/welcomeTextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/gameOverTextView"
         app:layout_constraintVertical_bias="0.244"
         android:layout_marginTop="10dp"/>
 
