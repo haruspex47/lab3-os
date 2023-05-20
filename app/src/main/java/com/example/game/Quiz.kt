@@ -1,18 +1,18 @@
 package com.example.game
 
+import android.R.id
 import android.annotation.SuppressLint
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.GridLayout
 import android.widget.TextView
-import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,12 +20,13 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.PrintWriter
-import java.lang.Math.random
 import java.net.Socket
-import java.util.Random
+
 
 const val MAX_ROW: Int = 5
 const val MAX_COLUMN: Int = 2
+var enableQue: MutableList<Question> = mutableListOf()
+var ret: Int? = -1
 
 class Quiz : AppCompatActivity() {
     private val GAME_ID = "3"
@@ -46,8 +47,6 @@ class Quiz : AppCompatActivity() {
     //private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
     private var playerEmail: String ? = "login" // !!! временно
 
-    private var enableQue: MutableList<Question> = mutableListOf()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +56,7 @@ class Quiz : AppCompatActivity() {
         var castle1But = findViewById<Button>(R.id.castle1)
         var _castle1But = CustomButton(castle1But, Pair<Int, Int>(0, 1))
         var castle2But = findViewById<Button>(R.id.castle2)
-        var _castle2But = CustomButton(castle2But, Pair<Int, Int>(MAX_ROW, 1))
+        var _castle2But = CustomButton(castle2But, Pair<Int, Int>(MAX_ROW, 1), 1) // TODO: у всех замок снизу, и сервер инверсирует номера?
         buttons.add(_castle1But);
 
         // Настройка обработчиков нажатия для кнопок
@@ -256,7 +255,7 @@ class Quiz : AppCompatActivity() {
     }
 
     suspend private fun onDuel(id: Pair<Int, Int>) {
-        var ret = toDuelQuestion()
+        toDuelQuestion()
         if (ret == 1) {
             onWin(id)
         } else if (ret == -1){
@@ -264,64 +263,88 @@ class Quiz : AppCompatActivity() {
         }
     }
 
-    private fun toDuelQuestion(): Int {
-        setContentView(R.layout.activity_quiz_question)
-        var ret: Int = 0
-
-        var Qtv = findViewById<TextView>(R.id.QuestionTV)
-
-        var ansButtons: Array<Button> = arrayOf()
-        ansButtons[0] = findViewById<Button>(R.id.ans1) as Button
-        ansButtons[1] = findViewById<Button>(R.id.ans2) as Button
-        ansButtons[2] = findViewById<Button>(R.id.ans3) as Button
-        ansButtons[3] = findViewById<Button>(R.id.ans4) as Button
-
-        var num = (0..enableQue.size).random()
-        Qtv.text = enableQue[num].que
-        var ans = enableQue[num].ans
-        ansButtons[0].text = ans[0]
-        ansButtons[1].text = ans[1]
-        ansButtons[2].text = ans[2]
-        ansButtons[3].text = ans[3]
-        ansButtons[0].setOnClickListener {
-            enableQue[num].checkAnswer(0)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        ansButtons[1].setOnClickListener {
-            enableQue[num].checkAnswer(1)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        ansButtons[2].setOnClickListener {
-            enableQue[num].checkAnswer(2)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        ansButtons[3].setOnClickListener {
-            enableQue[num].checkAnswer(3)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        enableQue.removeAt(num)
-
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                writer.println(enableQue[num].correct)
-                writer.flush()
-                var str = reader.readLine()
-                if (str == "$player_id")
-                    ret = 1
-                else if (str == "333")
-                    ret = 0
-                else
-                    ret -1
-            } catch (e: Exception) {
-                e.printStackTrace()
+    private fun toDuelQuestion() {
+        SocketHelper.clientSocket = clientSocket
+        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                ret = data?.getIntExtra("ret", -1)
             }
         }
-        setContentView(R.layout.activity_quiz)
-        return ret
+
+        val intent = Intent(this, QuizQuestion::class.java)
+        intent.putExtra("flag", true)
+        someActivityResultLauncher.launch(intent)
+
+//        // TODO: новая активность
+//        val requestCode = 1 // Вы можете использовать любое число
+//        val i = Intent(this, QuizQuestion::class.java)
+
+        //startActivityForResult(i, requestCode)
+
+//        setContentView(R.layout.activity_quiz_question)
+//        var ret: Int = 0
+//
+//        var Qtv = findViewById<TextView>(R.id.QuestionTV) as TextView
+//
+//        var ansButtons: Array<Button> = arrayOf()
+//        ansButtons[0] = findViewById<Button>(R.id.ans1) as Button
+//        ansButtons[1] = findViewById<Button>(R.id.ans2) as Button
+//        ansButtons[2] = findViewById<Button>(R.id.ans3) as Button
+//        ansButtons[3] = findViewById<Button>(R.id.ans4) as Button
+//
+//        var num = (0..enableQue.size).random()
+//        Qtv.text = enableQue[num].que
+//        var ans = enableQue[num].ans
+//        ansButtons[0].text = ans[0]
+//        ansButtons[1].text = ans[1]
+//        ansButtons[2].text = ans[2]
+//        ansButtons[3].text = ans[3]
+//        ansButtons[0].setOnClickListener {
+//            enableQue[num].checkAnswer(0)
+//            for (buttons in ansButtons)
+//                buttons.isEnabled = false
+//        }
+//        ansButtons[1].setOnClickListener {
+//            enableQue[num].checkAnswer(1)
+//            for (buttons in ansButtons)
+//                buttons.isEnabled = false
+//        }
+//        ansButtons[2].setOnClickListener {
+//            enableQue[num].checkAnswer(2)
+//            for (buttons in ansButtons)
+//                buttons.isEnabled = false
+//        }
+//        ansButtons[3].setOnClickListener {
+//            enableQue[num].checkAnswer(3)
+//            for (buttons in ansButtons)
+//                buttons.isEnabled = false
+//        }
+//        enableQue.removeAt(num)
+//
+//        GlobalScope.launch(Dispatchers.IO) {
+//            try {
+//                writer.println(enableQue[num].correct)
+//                writer.flush()
+//                var str = reader.readLine()
+//                if (str == "$player_id")
+//                    ret = 1
+//                else if (str == "333")
+//                    ret = 0
+//                else
+//                    ret -1
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//        setContentView(R.layout.activity_quiz)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            val ret = data?.getStringExtra("ret")
+        }
     }
 
     private fun exitToMenu() {
@@ -409,65 +432,27 @@ class Quiz : AppCompatActivity() {
     }
 
     private fun onButtonClick(id: Pair<Int, Int>) {
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                if(toQuestion()) {
-                    writer.println("1")
-                    writer.flush()
-                    onWin(id)
-                } else {
-                    writer.println("0")
-                    writer.flush()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        Log.d("Debug", "Вход в обычный вопрос-0")
+        toQuestion()
+        if (ret == 1)
+            onWin(id)
     }
 
-    private fun toQuestion(): Boolean {
-        setContentView(R.layout.activity_quiz_question)
-        var ret = false
-
-        var Qtv = findViewById<TextView>(R.id.QuestionTV)
-
-        var ansButtons: Array<Button> = arrayOf()
-        ansButtons[0] = findViewById<Button>(R.id.ans1) as Button
-        ansButtons[1] = findViewById<Button>(R.id.ans2) as Button
-        ansButtons[2] = findViewById<Button>(R.id.ans3) as Button
-        ansButtons[3] = findViewById<Button>(R.id.ans4) as Button
-
-        var num = (0..enableQue.size).random()
-        Qtv.text = enableQue[num].que
-        var ans = enableQue[num].ans
-        ansButtons[0].text = ans[0]
-        ansButtons[1].text = ans[1]
-        ansButtons[2].text = ans[2]
-        ansButtons[3].text = ans[3]
-        ansButtons[0].setOnClickListener {
-            enableQue[num].checkAnswer(0)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        ansButtons[1].setOnClickListener {
-            enableQue[num].checkAnswer(1)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        ansButtons[2].setOnClickListener {
-            enableQue[num].checkAnswer(2)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        ansButtons[3].setOnClickListener {
-            enableQue[num].checkAnswer(3)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-        }
-        enableQue.removeAt(num)
-
-        setContentView(R.layout.activity_quiz)
-        return ret
+    private fun toQuestion() {
+        SocketHelper.clientSocket = clientSocket
+        Log.d("Debug", "Вход в обычный вопрос-0.5")
+//        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            if (result.resultCode == Activity.RESULT_OK) {
+//                val data: Intent? = result.data
+//                ret = data?.getIntExtra("ret", -1)
+//            }
+//        }
+        Log.d("Debug", "Вход в обычный вопрос-0.5")
+        val intent = Intent(this, QuizQuestion::class.java)
+        intent.putExtra("flag", false)
+        Log.d("Debug", "Вход в обычный вопрос-0.5")
+        startActivity(intent)
+        //someActivityResultLauncher.launch(intent)
     }
 
 
@@ -567,5 +552,7 @@ class Question(val que: String, val ans: Array<String>, val correctAnswerIndex: 
     }
 }
 
-
+object SocketHelper {
+    var clientSocket: Socket? = null
+}
 

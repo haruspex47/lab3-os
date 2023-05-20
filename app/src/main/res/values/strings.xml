@@ -10,4 +10,5 @@
     <string name="logout">Выйти</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_custom_button">CustomButton</string>
+    <string name="title_activity_quiz_question">QuizQuestion</string>
 </resources>
