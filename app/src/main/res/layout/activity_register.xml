@@ -11,6 +11,8 @@
 
     <TextView
         android:text="@string/register"
+        android:textColor="#FF6392"
+        android:fontFamily="@font/zerocool"
         android:textSize="35sp"
         android:layout_marginBottom="20dp"
         android:textStyle="bold"
@@ -31,7 +33,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
@@ -43,6 +46,9 @@
     <Button
         android:id="@+id/btn_register"
         android:text="@string/register"
+        android:fontFamily="@font/zerocool"
+        android:backgroundTint="#FFE45E"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -57,11 +63,20 @@
     <TextView
         android:id="@+id/loginNow"
         android:text="@string/click_to_login"
+        android:fontFamily="@font/zerocool"
+        android:textColor="#FF6392"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:gravity="center"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/konstr"
+        android:translationY="80sp"
+        />
 
 </LinearLayout>

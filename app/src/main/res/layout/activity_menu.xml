@@ -32,7 +32,9 @@
         android:id="@+id/quizButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Играть в викторину!" />
+        android:text="Играть в викторину!"
+        android:fontFamily="@font/zerocool"
+        android:backgroundTint="#FFE45E"/>
 
 <!--    <Button-->
 <!--        android:id="@+id/statsButton"-->

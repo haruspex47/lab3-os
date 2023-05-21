@@ -1,15 +1,34 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="85dp"
+        android:layout_height="66dp"
+        android:cropToPadding="true"
+        android:scaleX="1"
+        android:scaleY="1"
+        android:src="@drawable/castle"
+        android:layout_gravity="center"
+        android:translationY="80dp"
+        app:tint="@color/argblue" />
+
     <Button
         android:id="@+id/castle1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Castle I" />
+        android:text="Castle I"
+        android:layout_margin="30dp"
+        android:translationY="60dp"
+        android:backgroundTint="@color/argblue"
+        android:fontFamily="@font/zerocool"
+        android:textSize="20sp"/>
+
 
     <GridLayout
         android:id="@+id/gridLayout"
@@ -17,85 +36,163 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:columnCount="3"
-        android:rowCount="4">
+        android:rowCount="4"
+        android:translationY="60dp">
 
         <Button
             android:id="@+id/button00"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0-0" />
+            android:text="0-0"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/button01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0-1" />
+            android:text="0-1"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button02"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0-2" />
+            android:text="0-2"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1-0" />
+            android:text="1-0"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+
+            />
 
         <Button
             android:id="@+id/button11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1-1" />
+            android:text="1-1"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1-2" />
+            android:text="1-2"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2-0" />
+            android:text="2-0"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button21"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2-1" />
+            android:text="2-1"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button22"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2-2" />
+            android:text="2-2"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button30"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3-0" />
+            android:text="3-0"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button31"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3-1" />
+            android:text="3-1"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/button32"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3-2" />
+            android:text="3-2"
+            android:layout_margin="10dp"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:textSize="20sp"
+            />
     </GridLayout>
+
+    <ImageView
+        android:layout_width="85dp"
+        android:layout_height="66dp"
+        android:cropToPadding="true"
+        android:scaleX="1"
+        android:scaleY="1"
+        android:src="@drawable/castle"
+        android:layout_gravity="center"
+        android:translationY="100dp"
+        app:tint="@color/cyclamen" />
 
     <Button
         android:id="@+id/castle2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Castle II" />
+        android:text="Castle II"
+        android:layout_margin="80dp"
+        android:backgroundTint="@color/cyclamen"
+        android:translationY="30dp"
+        android:fontFamily="@font/zerocool"
+        android:textSize="20sp"/>
+
 
 </LinearLayout>

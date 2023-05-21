@@ -11,12 +11,15 @@
 
     <TextView
         android:text="@string/login"
+        android:textColor="#FF6392"
+        android:fontFamily="@font/zerocool"
         android:textSize="35sp"
         android:layout_marginBottom="20dp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -43,8 +46,12 @@
     <Button
         android:id="@+id/btn_login"
         android:text="@string/login"
+        android:fontFamily="@font/zerocool"
+        android:backgroundTint="#FFE45E"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="20dp"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -55,13 +62,32 @@
         android:padding="15dp"/>
 
     <TextView
+        android:id="@+id/glowingText"
+        android:text="У вас еще нет аккаунта?"
+        android:fontFamily="@font/zerocool"
+        android:textColor="#FF6392"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:padding="5dp"
+        />
+
+    <TextView
         android:id="@+id/registerNow"
         android:text="@string/click_to_register"
+        android:fontFamily="@font/zerocool"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FF6392"
         android:textSize="20sp"
-        android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:gravity="center"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/konstr"
+        android:translationY="70sp"
+        />
 
 </LinearLayout>

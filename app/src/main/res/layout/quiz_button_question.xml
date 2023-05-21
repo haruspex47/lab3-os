@@ -1,7 +1,7 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:orientation="vertical">
 
@@ -9,23 +9,45 @@
         android:id="@+id/ans1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ans I" />
+        android:layout_margin="10dp"
+        android:backgroundTint="#FFE45E"
+        android:fontFamily="@font/zerocool"
+        android:text="Ans I"
+        android:textSize="20sp"
+        android:translationY="180dp"/>
 
     <Button
         android:id="@+id/ans2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ans II" />
+        android:text="Ans II"
+        android:layout_margin="10dp"
+        android:backgroundTint="#FFE45E"
+        android:fontFamily="@font/zerocool"
+        android:textSize="20sp"
+        android:translationY="180dp"/>
 
     <Button
         android:id="@+id/ans3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ans III" />
+        android:text="Ans III"
+        android:layout_margin="10dp"
+        android:backgroundTint="#FFE45E"
+        android:fontFamily="@font/zerocool"
+        android:textSize="20sp"
+        android:translationY="180dp"/>
+
 
     <Button
         android:id="@+id/ans4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ans IV" />
+        android:text="Ans IV"
+        android:layout_margin="10dp"
+        android:backgroundTint="#FFE45E"
+        android:fontFamily="@font/zerocool"
+        android:textSize="20sp"
+        android:translationY="180dp"/>
+
 </LinearLayout>
