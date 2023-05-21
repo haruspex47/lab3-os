@@ -15,7 +15,6 @@
         android:scaleY="1"
         android:src="@drawable/castle"
         android:layout_gravity="center"
-        android:translationY="80dp"
         app:tint="@color/argblue" />
 
     <Button
@@ -23,8 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Castle I"
-        android:layout_margin="30dp"
-        android:translationY="60dp"
+        android:layout_gravity="center"
         android:backgroundTint="@color/argblue"
         android:fontFamily="@font/zerocool"
         android:textSize="20sp"/>
@@ -36,8 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:columnCount="3"
-        android:rowCount="4"
-        android:translationY="60dp">
+        android:rowCount="4">
 
         <Button
             android:id="@+id/button00"
@@ -180,7 +177,6 @@
         android:scaleY="1"
         android:src="@drawable/castle"
         android:layout_gravity="center"
-        android:translationY="100dp"
         app:tint="@color/cyclamen" />
 
     <Button
@@ -188,9 +184,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Castle II"
-        android:layout_margin="80dp"
         android:backgroundTint="@color/cyclamen"
-        android:translationY="30dp"
+        android:layout_gravity="center"
         android:fontFamily="@font/zerocool"
         android:textSize="20sp"/>
 
