@@ -157,6 +157,7 @@ class GameNull : AppCompatActivity() {
                 val response = reader.readLine()
                 if (response.toInt() == 0) {
                     Log.d("Error", "Игрок отключился")
+                    exitToMenu()
                     // TODO: сообщение о сожалении @a1sarpi
 
                     //Тоже надеюсь что правильно сделал, не было возможности проверить
@@ -180,7 +181,6 @@ class GameNull : AppCompatActivity() {
                         showDialog()
                     }
                 }
-                var number = response.toInt()
 
                 // Обновляем UI в основном потоке
                 launch(Dispatchers.Main) {

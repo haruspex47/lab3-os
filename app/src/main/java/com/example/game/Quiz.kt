@@ -552,8 +552,8 @@ class Quiz : AppCompatActivity() {
             try {
                 if (clientSocket.isConnected) {
                     // Получаем идентификатор игрока от сервера
-                    val playerId = reader.readLine().toInt()
-                    if (playerId == 1) {
+                    player_id = reader.readLine().toInt()
+                    if (player_id == 1) {
                         myCastle = buttons.last()
                         enemyCastle = buttons[0]
                     } else {
@@ -562,11 +562,8 @@ class Quiz : AppCompatActivity() {
                     }
                     myCastle.status = 1
                     enButtons.clear()
-                    //enButtons.add(myCastle)
-
                     enemyEmail = reader.readLine()
-                    Log.d("Debug.", "Id ${playerId}, Почта ${playerEmail}")
-                    //player = Player(playerId, playerEmail)
+                    Log.d("Debug.", "Id ${player_id}, Почта ${playerEmail}")
 
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
@@ -575,7 +572,7 @@ class Quiz : AppCompatActivity() {
                         tv = findViewById(R.id.currentPlayerTV)
 
 
-                        if (playerId != 0) {
+                        if (player_id != 0) {
                             // Через сервер ждём ответ другого игрока
                             tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
                             for (bt in myCastle.getNeighbors()) {
@@ -586,7 +583,6 @@ class Quiz : AppCompatActivity() {
                         } else {
                             tv.text = "Сейчас ход игрока ${playerEmail}"
                             enableButtons(myCastle.getNeighbors())
-                            //enableAllButtons()
                         }
                     }
                 } else {

@@ -52,4 +52,5 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="castle1_button">Castle I</string>
+    <string name="title_activity_tic_tac_toe">TicTacToe</string>
 </resources>
