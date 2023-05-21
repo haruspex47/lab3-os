@@ -20,6 +20,7 @@ class Server {
         println("Server is running on $address:${serverSocket.localPort}")
         while (true) {
             val clientSocket = serverSocket.accept()
+            println("Произведено новое подключение к серверу")
             val player = Player(clientSocket)
             all_players[player.gm.id].add(player)
             check_queue(player.gm.id, true)
@@ -86,6 +87,7 @@ class Server {
             try {
                 when(gm) {
                     Game.RANNUM -> rannum()
+                    Game.QUIZ -> quiz()
                     else -> {println("Ошибка! Игры ${gm} не существует")}
                 }
             } catch (e: Exception) {
@@ -96,8 +98,59 @@ class Server {
             }
         }
 
+        private fun quiz() {
+            println("Игрок ${id} вошёл в игру ${gm}")
+            win = false
+            enemy.win = false
+            while (true) {
+                println("Сервер ждёт данные")
+                val line = reader.readLine()
+                if (enemy.win) {
+                    onWin(line.toInt())
+                    break
+                }
+                if (line == null) {
+                    println("fuckup")
+                    val number = -111 // !!! TODO
+                    println("Игрок $id выбрал число $number")
+                    enemy.sendOpponentNumber(number)
+                    reader.close()
+                    writer.close()
+                    clientSocket.close()
+                    enemy.reader.close()
+                    enemy.writer.close()
+                    enemy.clientSocket.close()
+                    break
+                }
+                val number = mutableListOf<Int>(line.toInt(), reader.readLine().toInt())
+                println("Игрок $id прислал данные $number")
+                enemy.writer.println("${number[0]}") // врагу
+                enemy.writer.flush()
+                enemy.writer.println("${number[1]}") // врагу
+                enemy.writer.flush()
+                var correct = reader.readLine()
+                println("Игрок $id прислал данные $correct")
+                enemy.writer.println("${correct}") // врагу
+                enemy.writer.flush()
+                if (correct == "duel") // !!!
+                    onDuel()
+                if ((correct == "true") and
+                        ((number[0].toInt() == 0) or (number[0].toInt() == 5))) { // !!! MAX_ROW == 5
+                    println("Игрок $id выиграл!")
+                    win = true
+                    val ans = reader.readLine().toInt()
+                    onWin(ans)
+                    break
+                }
+            }
+        }
+
+        private fun onDuel() {
+            TODO("Not yet implemented")
+        }
+
         fun rannum() {
-            println("Игрок ${id} вошёл в игру")
+            println("Игрок ${id} вошёл в игру ${gm}")
             win = false
             enemy.win = false
             sendGuessedNumber(guessedNumber)
@@ -135,8 +188,8 @@ class Server {
         }
 
         private fun onWin(ans: Int) {
-            println("Игрок на вопрос о начале новой игры ответил ${ans}")
-            if (ans == id) {
+            println("Игрок {$id} на вопрос о начале новой игры ответил ${ans}")
+            if (ans != -1) {
                 println("Размер очереди на данный момент равен ${all_players[gm.id].size}")
                 all_players[gm.id].add(this)
                 // TODO: возможность отключиться или кнопку выхода в меню @a1sarpi
@@ -149,6 +202,19 @@ class Server {
                 writer.close()
                 clientSocket.close()
             }
+//            if (ans == id) {
+//                println("Размер очереди на данный момент равен ${all_players[gm.id].size}")
+//                all_players[gm.id].add(this)
+//                // TODO: возможность отключиться или кнопку выхода в меню @a1sarpi
+//                Thread {
+//                    // Код, выполняемый в ином потоке
+//                    check_queue(gm.id, false)
+//                }.start()
+//            } else {
+//                reader.close()
+//                writer.close()
+//                clientSocket.close()
+//            }
         }
     }
 }

@@ -26,7 +26,7 @@ import java.net.Socket
 const val MAX_ROW: Int = 5
 const val MAX_COLUMN: Int = 2
 var enableQue: MutableList<Question> = mutableListOf()
-var ret: Int? = -1
+var flag: Boolean = true
 
 class Quiz : AppCompatActivity() {
     private val GAME_ID = "3"
@@ -45,7 +45,10 @@ class Quiz : AppCompatActivity() {
     private lateinit var writer: PrintWriter
 
     //private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
-    private var playerEmail: String ? = "login" // !!! временно
+    private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
+    private var currentBattleId: Pair<Int, Int> = Pair<Int, Int>(0,0)
+    private lateinit var myCastle: CustomButton
+    private lateinit var enemyCastle: CustomButton
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +59,7 @@ class Quiz : AppCompatActivity() {
         var castle1But = findViewById<Button>(R.id.castle1)
         var _castle1But = CustomButton(castle1But, Pair<Int, Int>(0, 1))
         var castle2But = findViewById<Button>(R.id.castle2)
-        var _castle2But = CustomButton(castle2But, Pair<Int, Int>(MAX_ROW, 1), 1) // TODO: у всех замок снизу, и сервер инверсирует номера?
+        var _castle2But = CustomButton(castle2But, Pair<Int, Int>(MAX_ROW, 1)) // TODO: у всех замок снизу, и сервер инверсирует номера?
         buttons.add(_castle1But);
 
         // Настройка обработчиков нажатия для кнопок
@@ -83,12 +86,10 @@ class Quiz : AppCompatActivity() {
         }
         buttons.add(_castle2But) // добавляем именно здесь
 
-        disableAllButtons()
-        // TODO: enable для соседей замка
-        Log.d("Debug", "${_castle2But.getNeighbors()}")
-        for (bt in buttons)
-            Log.d("Debug", "buttons ids: ${bt.getRow()} ${bt.getColumn()}")
-
+        for (butt in buttons)
+            butt.bt.isEnabled = false
+//        enableButtons(myCastle.getNeighbors())
+//        disableAllButtons()
         //TODO: gui @a1sarpi
 
 
@@ -110,9 +111,20 @@ class Quiz : AppCompatActivity() {
                     writer.flush()
 
                     // Получаем идентификатор игрока от сервера
-                    val playerId = reader.readLine().toInt()
+                    player_id = reader.readLine().toInt()
+                    if (player_id == 1) {
+                        myCastle = buttons.last()
+                        enemyCastle = buttons[0]
+                    } else {
+                        myCastle = buttons[0]
+                        enemyCastle = buttons.last()
+                    }
+                    myCastle.status = 1
+                    enButtons.clear()
+                    //enButtons.add(myCastle)
+
                     enemyEmail = reader.readLine()
-                    Log.d("Debug.", "Id ${playerId}")
+                    Log.d("Debug.", "Id $player_id, email $playerEmail")
                     //player = Player(playerId, playerEmail)
 
                     // Обновляем UI в основном потоке
@@ -122,13 +134,18 @@ class Quiz : AppCompatActivity() {
                         tv = findViewById(R.id.currentPlayerTV)
 
 
-                        if (playerId != 0) {
+                        if (player_id != 0) {
                             // Через сервер ждём ответ другого игрока
                             tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
+                            for (bt in myCastle.getNeighbors()) {
+                                if (getButton(bt).status != 1)
+                                    enButtons.add(getButton(bt))
+                            }
                             waitForOtherPlayer()
                         } else {
                             tv.text = "Сейчас ход игрока ${playerEmail}"
-                            enableButtons(_castle2But.getNeighbors())
+                            enableButtons(myCastle.getNeighbors())
+                            //enableAllButtons()
                         }
                     }
                 } else {
@@ -180,7 +197,7 @@ class Quiz : AppCompatActivity() {
             Question(
                 "Что такое компактный оператор?",
                 arrayOf("Оператор, переводящий ограниченное множество в предкомпактное.", "Оператор, переводящий компактное множество в ограниченное.", "Оператор, переводящий предкомпактное множество в компактное.", "Оператор, переводящий ограниченное множество в компактное."),
-                2
+                0 // 2
             )
         )
         enableQue.add(
@@ -201,7 +218,7 @@ class Quiz : AppCompatActivity() {
             Question(
                 "Что такое функционал в функциональном анализе?",
                 arrayOf("Линейный оператор, переводящий векторное пространство в скаляры.", "Линейный оператор, переводящий скаляры в векторное пространство.", "Функция, отображающая векторное пространство в скаляры.", "Функция, отображающая скаляры в векторное пространство."),
-                2
+                0 // 2
             )
         )
         enableQue.add(
@@ -216,37 +233,51 @@ class Quiz : AppCompatActivity() {
     }
 
     private fun waitForOtherPlayer() {
+        Log.d("Debug", "Игрок ожидает ответа другого игрока...")
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 // дуэль?
-                val xy = reader.readLine().split(",")
-                val id = Pair<Int, Int>(xy[0].toInt(), xy[1].toInt())
-                if (getButton(id).status == 1) {
-                    onDuel(id)
-                }
-
                 val response = reader.readLine()
-                if (response.toInt() == 0) {
+                Log.d("Debug", "Игрок ожидает ответа другого игрока и получил данные $response")
+                if (response == "-111") {
                     Log.d("Error", "Игрок отключился")
                     // TODO: сообщение о сожалении @a1sarpi
                     exitToMenu()
                 }
-                if ((response.toInt() == 1) and (id == Pair<Int, Int>(MAX_ROW, 1))) {
+                val xy = mutableListOf<Int>(response.toInt(), reader.readLine().toInt())
+                val correct = reader.readLine() // null, true, false
+                Log.d("Debug", "Игрок получил данные $correct")
+                currentBattleId = Pair<Int, Int>(xy[0].toInt(), xy[1].toInt())
+                Log.d("Debug", "Id битвы сменился на $currentBattleId")
+                if (getButton(currentBattleId).status == 1) {
+                    onDuel(currentBattleId)
+                }
+                if ((correct == "true") and (getButton(currentBattleId) == myCastle)) { // TODO: !!! поменять
                     // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
+                    Log.d("Debug", "Вражеский игрок победил!")
                     gameOver = true
                     launch(Dispatchers.Main) {
                         showDialog()
                     }
                 }
-                var number = response.toInt()
 
                 // Обновляем UI в основном потоке
                 launch(Dispatchers.Main) {
+                    Log.d("Debug", "Вражеский игрок завершил битву ...")
+                    if (correct == "true") {
+                        Log.d("Debug", "... и выиграл её")
+                        getButton(currentBattleId).status = -1
+                        // TODO: gui @a1sarpi
+                    }
                     enableAllButtons()
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
+                    Log.d("Debug", "currentPlayer = $currentPlayer, playerEmail = $playerEmail, enemyEmail = $enemyEmail, playerId = $player_id")
                     tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == player_id + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
+                            if (currentPlayer == player_id + 1)
+                                playerEmail?.removeSuffix("@whatever.ru")
+                            else
+                                enemyEmail?.removeSuffix("@whatever.ru")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -255,26 +286,26 @@ class Quiz : AppCompatActivity() {
     }
 
     suspend private fun onDuel(id: Pair<Int, Int>) {
-        toDuelQuestion()
-        if (ret == 1) {
-            onWin(id)
-        } else if (ret == -1){
-            onLose(id)
-        }
+//        toDuelQuestion()
+//        if (ret == 1) {
+//            onWin(id)
+//        } else if (ret == -1){
+//            onLose(id)
+//        }
     }
 
     private fun toDuelQuestion() {
-        SocketHelper.clientSocket = clientSocket
-        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
-                ret = data?.getIntExtra("ret", -1)
-            }
-        }
-
-        val intent = Intent(this, QuizQuestion::class.java)
-        intent.putExtra("flag", true)
-        someActivityResultLauncher.launch(intent)
+//        SocketHelper.clientSocket = clientSocket
+//        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            if (result.resultCode == Activity.RESULT_OK) {
+//                val data: Intent? = result.data
+//                ret = data?.getIntExtra("ret", -1)
+//            }
+//        }
+//
+//        val intent = Intent(this, QuizQuestion::class.java)
+//        intent.putExtra("flag", true)
+//        someActivityResultLauncher.launch(intent)
 
 //        // TODO: новая активность
 //        val requestCode = 1 // Вы можете использовать любое число
@@ -342,8 +373,13 @@ class Quiz : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        Log.d("Debug", "Вошли в функцию обработки результата")
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            val ret = data?.getStringExtra("ret")
+            val ret = data?.getStringExtra("ret")?.toIntOrNull() // String обратно в Int
+            if (ret != null) {
+                extracted(ret)
+            }
         }
     }
 
@@ -392,19 +428,44 @@ class Quiz : AppCompatActivity() {
 
     private fun enableAllButtons() {
         for (button in enButtons) {
-            button.bt.isEnabled = true
+            if (button.status != 1)
+                button.bt.isEnabled = true
         }
     }
 
     private fun enableButtons(ids: MutableList<Pair<Int, Int>>) {
         for (buttonsId in ids) {
-            getButton(buttonsId).bt.isEnabled = (getButton(buttonsId).status != 1)
+            if (getButton(buttonsId).status != 1) {
+                getButton(buttonsId).bt.isEnabled = true
+                enButtons.add(getButton(buttonsId))
+            } else if (enButtons.contains(getButton(buttonsId)))
+                enButtons.remove(getButton(buttonsId))
         }
     }
 
     private fun onWin(id: Pair<Int, Int>) {
+        Log.d("Debug", "Игрок официально выиграл один вопрос!")
+
         getButton(id).status = 1
-        enableButtons(getButton(id).getNeighbors())
+
+        if (getButton(id) == enemyCastle) {
+            // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
+            gameOver = true
+            showDialog()
+        } else {
+            enableButtons(getButton(id).getNeighbors())
+            // Смена текущего игрока
+            currentPlayer = if (currentPlayer == 1) 2 else 1
+            tv.text = "Сейчас ход игрока " +
+                    if (currentPlayer == player_id + 1) playerEmail?.removeSuffix("@whatever.ru")
+                    else enemyEmail?.removeSuffix("@whatever.ru")
+
+
+            disableAllButtons()
+
+            // Через сервер ждём ответ другого игрока
+            waitForOtherPlayer()
+        }
     }
 
     private fun onLose(id: Pair<Int, Int>) {
@@ -432,76 +493,121 @@ class Quiz : AppCompatActivity() {
     }
 
     private fun onButtonClick(id: Pair<Int, Int>) {
-        Log.d("Debug", "Вход в обычный вопрос-0")
+        currentBattleId = id
+        Log.d("Debug", "Данный игрок нажал на кнопку с id = ${currentBattleId}")
+
+
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                writer.println("${currentBattleId.first}")
+                writer.flush()
+                writer.println("${currentBattleId.second}")
+                writer.flush()
+                // Обновляем UI в основном потоке
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         toQuestion()
+//        extracted(id)
+    }
+
+    private fun extracted(ret: Int?) {
+        Log.d("Debug", "ret = ${ret}")
         if (ret == 1)
-            onWin(id)
+            onWin(currentBattleId)
+        if (ret == -1)
+            onLose(currentBattleId)
     }
 
     private fun toQuestion() {
         SocketHelper.clientSocket = clientSocket
-        Log.d("Debug", "Вход в обычный вопрос-0.5")
 //        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 //            if (result.resultCode == Activity.RESULT_OK) {
 //                val data: Intent? = result.data
 //                ret = data?.getIntExtra("ret", -1)
 //            }
 //        }
-        Log.d("Debug", "Вход в обычный вопрос-0.5")
         val intent = Intent(this, QuizQuestion::class.java)
-        intent.putExtra("flag", false)
-        Log.d("Debug", "Вход в обычный вопрос-0.5")
-        startActivity(intent)
+        intent.putExtra("flag", false) // !!! нужно ли?
+        Log.d("Debug", "Пытаемся войти в класс QuizQuestion")
+        startActivityForResult(intent, 1)
+
+//        while (flag) { }
+//        flag = true
         //someActivityResultLauncher.launch(intent)
     }
 
 
-    @SuppressLint("SetTextI18n")
     private fun resetGame() {
+        Log.d("Debug", "Вошли в функцию resetGame()")
+        enButtons.clear()
         // TODO: ожидание сервера @a1sarpi
-        disableAllButtons()
-
-        //player.reset()
+        for (bt in buttons)
+            bt.bt.isEnabled = false
         gameOver = false
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                // Получаем идентификатор игрока от сервера
-                val playerId = reader.readLine().toInt()
-                enemyEmail = reader.readLine()
-                Log.d("Debug.", "Id ${playerId}")
-
-                // Обновляем UI в основном потоке
-                launch(Dispatchers.Main) {
-                    // TODO: конец ожидания сервера (фронтенд) @a1sarpi
-                    currentPlayer = 1
-                    tv = findViewById(R.id.currentPlayerTextView)
-                    tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == playerId + 1) playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
-
-
-                    if (playerId != 0) {
-                        // Через сервер ждём ответ другого игрока
-                        tv.text = "Сейчас ход игрока ${enemyEmail}"
-                        waitForOtherPlayer()
+                if (clientSocket.isConnected) {
+                    // Получаем идентификатор игрока от сервера
+                    val playerId = reader.readLine().toInt()
+                    if (playerId == 1) {
+                        myCastle = buttons.last()
+                        enemyCastle = buttons[0]
                     } else {
-                        tv.text = "Сейчас ход игрока ${playerEmail}"
-                        enableAllButtons()
+                        myCastle = buttons[0]
+                        enemyCastle = buttons.last()
                     }
-                } // FIXME: жёсткое дублирование кода, но вроде бы этого не избежать
+                    myCastle.status = 1
+                    enButtons.clear()
+                    //enButtons.add(myCastle)
+
+                    enemyEmail = reader.readLine()
+                    Log.d("Debug.", "Id ${playerId}, Почта ${playerEmail}")
+                    //player = Player(playerId, playerEmail)
+
+                    // Обновляем UI в основном потоке
+                    launch(Dispatchers.Main) {
+                        // TODO: конец ожидания сервера (фронтенд) @a1sarpi
+                        currentPlayer = 1
+                        tv = findViewById(R.id.currentPlayerTV)
+
+
+                        if (playerId != 0) {
+                            // Через сервер ждём ответ другого игрока
+                            tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
+                            for (bt in myCastle.getNeighbors()) {
+                                if (getButton(bt).status != 1)
+                                    enButtons.add(getButton(bt))
+                            }
+                            waitForOtherPlayer()
+                        } else {
+                            tv.text = "Сейчас ход игрока ${playerEmail}"
+                            enableButtons(myCastle.getNeighbors())
+                            //enableAllButtons()
+                        }
+                    }
+                } else {
+                    // Обработка ошибки подключения
+                    Log.d("Server", "Failed to connect to the server.")
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    suspend fun showDialog() {
+    fun showDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setMessage("Начать новую игру?")
             .setCancelable(false)
             .setPositiveButton("Да") { dialog, id ->
                 GlobalScope.launch(Dispatchers.IO) {
-                    sendData("${player_id}")
+                    //sendData("${player_id}")
+                    writer.println("1234567")
+                    writer.flush()
                 }
                 // TODO: показать ещё окно о переподключении @a1sarpi
                 resetGame()

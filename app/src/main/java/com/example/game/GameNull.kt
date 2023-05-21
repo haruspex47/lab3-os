@@ -406,7 +406,7 @@ class GameNull : AppCompatActivity() {
                 // Еще одна попытка написать что-то вменяемое
 
 
-                //resetGame()
+                resetGame()
             }
             .setNegativeButton("Нет") { dialog, id ->
                 GlobalScope.launch(Dispatchers.IO) {

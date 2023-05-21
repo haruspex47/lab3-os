@@ -16,20 +16,20 @@ import java.io.PrintWriter
 
 class QuizQuestion : ComponentActivity() {
     private lateinit var Qtv: TextView
-    private var ansButtons: Array<Button> = arrayOf()
+    private var ansButtons: MutableList<Button> = mutableListOf()
 
     val clientSocket = SocketHelper.clientSocket
     private var writer = PrintWriter(clientSocket?.getOutputStream())
     private var reader = BufferedReader(InputStreamReader(clientSocket?.getInputStream()))
 
     var num: Int = 0
+    var ret: Int = -111
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("Debug", "Вход в обычный вопрос")
         setContentView(R.layout.activity_quiz_question)
-        Log.d("Debug", "Вход в обычный вопрос-2")
 
+        Log.d("Debug", "Запущен класс QuizQuestion")
 //        GlobalScope.launch(Dispatchers.IO) {
 //            try {
 //                }
@@ -41,22 +41,19 @@ class QuizQuestion : ComponentActivity() {
 //        val b = intent.extras
 //        val id = b!!.getInt("id")
 
-        Qtv = findViewById<TextView>(R.id.QuestionTV)
-        ansButtons[0] = findViewById<Button>(R.id.ans1)
-        ansButtons[1] = findViewById<Button>(R.id.ans2)
-        ansButtons[2] = findViewById<Button>(R.id.ans3)
-        ansButtons[3] = findViewById<Button>(R.id.ans4)
+        Qtv = findViewById(R.id.QuestionTV)
+        ansButtons.add(findViewById(R.id.ans1))
+        ansButtons.add(findViewById(R.id.ans2))
+        ansButtons.add(findViewById(R.id.ans3))
+        ansButtons.add(findViewById(R.id.ans4))
 
-        Log.d("Debug", "Вход в обычный вопрос-2.5")
-
-        num = (0..enableQue.size).random()
+        num = (0 until enableQue.size).random()
         Qtv.text = enableQue[num].que
         val ans = enableQue[num].ans
         ansButtons[0].text = ans[0]
         ansButtons[1].text = ans[1]
         ansButtons[2].text = ans[2]
         ansButtons[3].text = ans[3]
-        Log.d("Debug", "Вход в обычный вопрос-3")
         ansButtons[0].setOnClickListener {
             enableQue[num].checkAnswer(0)
             for (buttons in ansButtons)
@@ -85,12 +82,16 @@ class QuizQuestion : ComponentActivity() {
     }
 
     private fun end() {
-        Log.d("Debug", "Выход из обычного вопроса")
+        Log.d("Debug", "В классе QuizQUestion запущена функция end(), при этом правильность ответа: ${enableQue[num].correct}")
+        var bool_ret: Boolean = enableQue[num].correct
+        if (bool_ret)
+            ret = 1
+        else
+            ret = 0
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 writer.println("${enableQue[num].correct}")
                 writer.flush()
-                ret = enableQue[num].correct as Int
 
                 val b = intent.extras
 
@@ -112,18 +113,20 @@ class QuizQuestion : ComponentActivity() {
                     }
                 }
 
+                enableQue.removeAt(num)
+
+                val resultCode = Activity.RESULT_OK
+                val intent = Intent()
+                intent.putExtra("ret", ret.toString()) // Int в String
+                setResult(resultCode, intent)
+                Log.d("Debug", "Выход из функции end(), при этом ret = $ret")
+
+                flag = false
+                finish()
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
         }
-
-        enableQue.removeAt(num)
-
-        //val resultCode = Activity.RESULT_OK // Используйте код результата по вашему усмотрению
-        //val intent = Intent()
-        //intent.putExtra("ret", ret)
-        //setResult(resultCode, intent)
-        finish()
     }
 }
