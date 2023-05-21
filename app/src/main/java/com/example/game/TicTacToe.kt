@@ -22,7 +22,7 @@ class TicTacToe : ComponentActivity() {
     private var enButtons: MutableList<Button> = mutableListOf()
     private var myButtonsId: MutableList<Pair<Int, Int>> = mutableListOf()
     val GAME_ID = "1"
-    private lateinit var buttons: MutableList<Button>
+    private lateinit var buttons: Array<Button>
     private var currentPlayer: Int = 1
     private var gameOver: Boolean = false
 
@@ -43,7 +43,7 @@ class TicTacToe : ComponentActivity() {
         setContentView(R.layout.activity_ttt)
 
         // Получение ссылок на кнопки
-        buttons = mutableListOf(
+        buttons = arrayOf(
             findViewById(R.id.button1),
             findViewById(R.id.button2),
             findViewById(R.id.button3),
@@ -61,7 +61,10 @@ class TicTacToe : ComponentActivity() {
             buttons[i].setOnClickListener {view -> onButtonClicked(view, i) }
         }
 
-        enButtons = buttons
+        enButtons.clear()
+        for (bt in buttons) {
+            enButtons.add(bt)
+        }
 
         disableAllButtons()
         // TODO: загрузка сервера - фронтенд @a1sarpi
@@ -124,18 +127,29 @@ class TicTacToe : ComponentActivity() {
                     // TODO: сообщение о сожалении @a1sarpi
                 }
                 var number = Pair<Int, Int>(response.toInt(), reader.readLine().toInt())
-                buttons[number.first*3 + number.second].text = currentPlayer.toString()
-                if (reader.readLine() == "win") {
+                Log.d("Debug", "Были получены данные $number")
+                enButtons.remove(buttons[number.first*3 + number.second])
+
+                var correct = reader.readLine()
+                Log.d("Debug", "Были получены данные $correct")
+                if (correct == "win") {
                     gameOver = true
                     Log.d("Debug", "Враг выиграл")
                     launch(Dispatchers.Main) {
                         showDialog()
                     }
                 }
-
+                if (correct == "nobody") {
+                    gameOver = true
+                    Log.d("Debug", "Ничья")
+                    launch(Dispatchers.Main) {
+                        showDialog()
+                    }
+                }
 
                 // UI в основном потоке
                 launch(Dispatchers.Main) {
+                    buttons[number.first*3 + number.second].text = if (player_id == 1) "0" else "1"
                     enableAllButtons()
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
@@ -174,41 +188,48 @@ class TicTacToe : ComponentActivity() {
 
         // number
         Log.d("Debug", "id: $id, id/3 = ${id / 3}")
-        var number = Pair<Int, Int>(id / 3, id - id / 3)
+        var number = Pair<Int, Int>(id / 3, id % 3)
         myButtonsId.add(number)
-        buttons[number.first*3 + number.second].text = player_id.toString()
 
         // посылаем серверу число
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 writer.println((id / 3).toString())
                 writer.flush()
-                writer.println((id - id / 3).toString())
+                writer.println((id % 3).toString())
                 writer.flush()
                 Log.d("Server", "На сервер отправлено число ${number}")
+
+                if (checkWin(Pair<Int, Int>(id / 3, id % 3))) {
+                    writer.println("win")
+                    writer.flush()
+                    // TODO: сообщение о победе/ничье (выше) gui @a1sarpi
+                    //disableAllButtons()
+                    gameOver = true
+                    //showDialog()
+                } else {
+                    if (enButtons.size == 0) {
+                        writer.println("nobody")
+                        writer.flush()
+                        //disableAllButtons()
+                        gameOver = true
+                        //showDialog()
+                    } else {
+                        writer.println("dontwin")
+                        writer.flush()
+                        //disableAllButtons()
+                        waitForOtherPlayer()
+                    }
+                }
                 // UI в основном потоке
                 launch(Dispatchers.Main) {
-                    // Проверка, угадана ли цифра
-                    if (checkWin(Pair<Int, Int>(id / 3, id - id / 3))) {
-                        writer.println("win")
-                        writer.flush()
-                        // TODO: сообщение о победе/ничье (выше) gui @a1sarpi
-                        disableAllButtons()
-                        gameOver = true
+                    Log.d("Debug", "number.first * 3 + number.second = ${number.first * 3 + number.second}")
+                    Log.d("Debug", "butt: ${buttons[number.first*3 + number.second]}")
+                    buttons[number.first * 3 + number.second].text = player_id.toString()
+                    disableAllButtons()
+                    if (gameOver) {
+                        gameOver = false
                         showDialog()
-                    } else {
-                        if (enButtons.size == 0) {
-                            writer.println("nobody")
-                            writer.flush()
-                            disableAllButtons()
-                            gameOver = true
-                            showDialog()
-                        } else {
-                            writer.println("dontwin")
-                            writer.flush()
-                            disableAllButtons()
-                            waitForOtherPlayer()
-                        }
                     }
                 }
             } catch (e: Exception) {
@@ -218,17 +239,22 @@ class TicTacToe : ComponentActivity() {
     }
 
     private fun checkWin(id: Pair<Int, Int>): Boolean {
+        Log.d("Debug", "Вошли в функцию проверки. myButtonsId: $myButtonsId, id: $id")
         var flag = true
         if (id.first == id.second) {
             for (i in 0..2) {
                 if (!myButtonsId.contains(Pair<Int, Int>(i, i))) {
                     flag = false
                     break
+                } else {
+                    Log.d("Debug", "Элемент с id ${Pair<Int, Int>(i, i)} присутствует")
                 }
             }
-        }
-        if (flag)
+        } else flag = false
+        if (flag) {
+            Log.d("Debug", "Проверка пройдена по первой диагонали")
             return true
+        }
 
         flag = true
         if (id.first == 2 - id.second) {
@@ -236,31 +262,43 @@ class TicTacToe : ComponentActivity() {
                 if (!myButtonsId.contains(Pair<Int, Int>(i, 2 - i))) {
                     flag = false
                     break
+                } else {
+                    Log.d("Debug", "Элемент с id ${Pair<Int, Int>(i, 2-i)} присутствует")
                 }
             }
-        }
-        if (flag)
+        } else flag = false
+        if (flag) {
+            Log.d("Debug", "Проверка пройдена по второй диагонали")
             return true
+        }
 
         flag = true
         for (i in 0..2) {
             if (!myButtonsId.contains(Pair<Int, Int>(i, id.second))) {
                 flag = false
                 break
+            } else {
+                Log.d("Debug", "Элемент с id ${Pair<Int, Int>(i, id.second)} присутствует")
             }
         }
-        if (flag)
+        if (flag) {
+            Log.d("Debug", "Проверка пройдена по вертикали")
             return true
+        }
+
         flag = true
         for (i in 0..2) {
             if (!myButtonsId.contains(Pair<Int, Int>(id.first, i))) {
                 flag = false
                 break
+            } else {
+                Log.d("Debug", "Элемент с id ${Pair<Int, Int>(id.first, i)} присутствует")
             }
         }
-        if (flag)
+        if (flag) {
+            Log.d("Debug", "Проверка пройдена по горизонтали")
             return true
-
+        }
         return false
     }
 
@@ -288,7 +326,13 @@ class TicTacToe : ComponentActivity() {
     }
 
     private fun resetGame() {
-        enButtons = buttons
+        for (bt in buttons)
+            bt.text = "-"
+        myButtonsId.clear()
+        enButtons.clear()
+        for (bt in buttons) {
+            enButtons.add(bt)
+        }
         disableAllButtons()
         gameOver = false
 

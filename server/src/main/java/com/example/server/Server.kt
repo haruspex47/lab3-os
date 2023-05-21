@@ -88,6 +88,7 @@ class Server {
                 when(gm) {
                     Game.RANNUM -> rannum()
                     Game.QUIZ -> quiz()
+                    Game.XO -> ttt()
                     else -> {println("Ошибка! Игры ${gm} не существует")}
                 }
             } catch (e: Exception) {
@@ -95,6 +96,58 @@ class Server {
                 reader.close()
                 writer.close()
                 clientSocket.close()
+            }
+        }
+
+        private fun ttt() {
+            println("Игрок ${id} вошёл в игру ${gm}")
+            win = false
+            enemy.win = false
+            while (true) {
+                println("Сервер ждёт данные")
+                val line = reader.readLine()
+                if (enemy.win) {
+                    onWin(line.toInt())
+                    break
+                }
+                if (line == null) {
+                    println("fuckup")
+                    val number = -111 // !!! TODO
+                    println("Игрок $id выбрал число $number")
+                    enemy.sendOpponentNumber(number)
+                    reader.close()
+                    writer.close()
+                    clientSocket.close()
+                    enemy.reader.close()
+                    enemy.writer.close()
+                    enemy.clientSocket.close()
+                    break
+                }
+                val number = mutableListOf<Int>(line.toInt(), reader.readLine().toInt())
+                println("Игрок $id прислал данные $number")
+                enemy.writer.println("${number[0]}") // врагу
+                enemy.writer.flush()
+                enemy.writer.println("${number[1]}") // врагу
+                enemy.writer.flush()
+                var correct = reader.readLine()
+                println("Игрок $id прислал данные $correct")
+                enemy.writer.println("${correct}") // врагу
+                enemy.writer.flush()
+                if (correct == "win") {
+                    println("Игрок $id выиграл!")
+                    win = true
+                    val ans = reader.readLine().toInt()
+                    onWin(ans)
+                    break
+                }
+                if (correct == "nobody") {
+                    println("Ничья!")
+                    win = true
+                    enemy.win = true
+                    val ans = reader.readLine().toInt()
+                    onWin(ans)
+                    break
+                }
             }
         }
 
