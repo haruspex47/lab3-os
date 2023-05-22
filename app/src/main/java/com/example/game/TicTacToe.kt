@@ -37,7 +37,7 @@ class TicTacToe : ComponentActivity() {
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
 
-    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
+    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email
     //private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
     private var player_id: Int = -1
 
@@ -46,6 +46,8 @@ class TicTacToe : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ttt)
+
+        Log.d("Debug", "Вошли в игру крестики-нолики с почтой ${playerEmail}")
 
         // Получение ссылок на кнопки
         buttons = arrayOf(

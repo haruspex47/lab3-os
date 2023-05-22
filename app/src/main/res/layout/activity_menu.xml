@@ -60,6 +60,13 @@
         android:fontFamily="@font/zerocool"
         android:backgroundTint="#FFE45E"/>
 
+    <Button
+        android:id="@+id/playerStatsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="stats!"
+        android:fontFamily="@font/zerocool"
+        android:backgroundTint="#FFE45E"/>
 <!--    <Button-->
 <!--        android:id="@+id/statsButton"-->
 <!--    android:fontFamily="@font/zerocool"-->

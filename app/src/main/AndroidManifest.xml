@@ -17,6 +17,11 @@
         android:theme="@style/Theme.MyGame"
         tools:targetApi="31">
         <activity
+            android:name=".PlayerStatsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_player_stats"
+            android:theme="@style/Theme.MyGame" />
+        <activity
             android:name=".TicTacToe"
             android:exported="false"
             android:label="@string/title_activity_tic_tac_toe"

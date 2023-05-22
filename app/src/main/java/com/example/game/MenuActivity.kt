@@ -8,8 +8,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -17,9 +15,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
-import com.google.firebase.ktx.initialize
 
 var userId: String? = null
 
@@ -81,6 +76,11 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         val email = "login${(0..10).random()}"
         val username = email
         val password = "pass${(0..10).random()}"
+        val playerStatsButton: Button = findViewById(R.id.playerStatsButton)
+        playerStatsButton.setOnClickListener {
+            val intent = Intent(this, PlayerStatsActivity::class.java)
+            startActivity(intent)
+        }
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
@@ -114,7 +114,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
                 if (signInTask.isSuccessful) {
                     val userId = auth.currentUser?.uid
                     Log.d("Firebase", "$userId, вход успешен")
-                // Вход успеше
+                // Вход успешен
                 // Вы можете выполнить дополнительные действия после успешного входа пользователя, например, переход на другой экран
                 } else {
                     Log.d("Firebase", "Не удалось войти: ${signInTask.exception}")
@@ -179,39 +179,39 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
 
 
-        // Получаем ссылку на корневой узел базы данных
-        val databaseRef = FirebaseDatabase.getInstance().reference
+//        // Получаем ссылку на корневой узел базы данных
+//        val databaseRef = FirebaseDatabase.getInstance().reference
+//
+//        // Создаем новый узел "users" и получаем ссылку на него
+//        val usersRef = databaseRef.child("users")
 
-        // Создаем новый узел "users" и получаем ссылку на него
-        val usersRef = databaseRef.child("users")
-
-        // Создаем новый уникальный идентификатор для пользователя
-        val userId = usersRef.push().key
-
-// Создаем объект данных пользователя
-        val userData = HashMap<String, Any>()
-        userData["username"] = "John"
-        userData["email"] = "check@mail.ru"
-        userData["password"] = "check1234567"
-        userData["age"] = 25
-
-// Создаем объект данных статистики игры
-        val gameStatsData = HashMap<String, Any>()
-        gameStatsData["game1Score"] = 1
-        gameStatsData["game2Score"] = 2
-        gameStatsData["game3Score"] = 3
-
-// Добавляем данные статистики игры в данные пользователя
-        userData["gameStats"] = gameStatsData
+//        // Создаем новый уникальный идентификатор для пользователя
+//        val userId = usersRef.push().key
+//
+//// Создаем объект данных пользователя
+//        val userData = HashMap<String, Any>()
+//        userData["username"] = "John"
+//        userData["email"] = "check@mail.ru"
+//        userData["password"] = "check1234567"
+//        userData["age"] = 25
+//
+//// Создаем объект данных статистики игры
+//        val gameStatsData = HashMap<String, Any>()
+//        gameStatsData["game1Score"] = 1
+//        gameStatsData["game2Score"] = 2
+//        gameStatsData["game3Score"] = 3
+//
+//// Добавляем данные статистики игры в данные пользователя
+//        userData["gameStats"] = gameStatsData
 
 // Добавляем данные пользователя в базу данных
-        usersRef.child(userId!!).setValue(userData)
-            .addOnSuccessListener {
-                // Данные успешно добавлены в базу данных
-            }
-            .addOnFailureListener { error ->
-                // Ошибка при добавлении данных в базу данных
-            }
+//        usersRef.child(userId!!).setValue(userData)
+//            .addOnSuccessListener {
+//                // Данные успешно добавлены в базу данных
+//            }
+//            .addOnFailureListener { error ->
+//                // Ошибка при добавлении данных в базу данных
+//            }
     }
 
     override fun onClick(v: View?) {
