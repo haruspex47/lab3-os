@@ -44,6 +44,22 @@
         android:fontFamily="@font/zerocool"
         android:backgroundTint="#FFE45E"/>
 
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="login!"
+        android:fontFamily="@font/zerocool"
+        android:backgroundTint="#FFE45E"/>
+
+    <Button
+        android:id="@+id/debugButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="debug!"
+        android:fontFamily="@font/zerocool"
+        android:backgroundTint="#FFE45E"/>
+
 <!--    <Button-->
 <!--        android:id="@+id/statsButton"-->
 <!--    android:fontFamily="@font/zerocool"-->

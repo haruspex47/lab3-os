@@ -9,6 +9,11 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,8 +37,8 @@ class TicTacToe : ComponentActivity() {
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
 
-    //private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
-    private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
+    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
+    //private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
     private var player_id: Int = -1
 
     private lateinit var enemyEmail: String
@@ -228,6 +233,7 @@ class TicTacToe : ComponentActivity() {
                     buttons[number.first * 3 + number.second].text = player_id.toString()
                     disableAllButtons()
                     if (gameOver) {
+                        incrementStats()
                         gameOver = false
                         showDialog()
                     }
@@ -235,6 +241,41 @@ class TicTacToe : ComponentActivity() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    private fun incrementStats() {
+        // Получаем ссылку на базу данных Firebase
+        val database = FirebaseDatabase.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        Log.d("Firebase", "Статистика увеличена (можно считать)-1")
+
+
+        // Проверяем, что пользователь авторизован
+        if (userId != null) {
+            Log.d("Firebase", "Статистика увеличена (можно считать)-2")
+            // Получаем ссылку на узел "gameStats" для данного пользователя
+            val gameStatsRef = database.reference.child("users").child(userId).child("gameStats")
+
+            // Увеличиваем значение параметра "game1Score" на единицу
+            gameStatsRef.child("game1Score").addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val currentScore = dataSnapshot.getValue(Int::class.java) ?: 0
+                    val newScore = currentScore + 1
+                    gameStatsRef.child("game1Score").setValue(newScore)
+                        .addOnSuccessListener {
+                            // Успешно обновлено значение параметра "game1Score"
+                        }
+                        .addOnFailureListener { error ->
+                            // Ошибка при обновлении значения параметра "game1Score"
+                        }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Обработка ошибок при чтении данных
+                }
+            })
         }
     }
 

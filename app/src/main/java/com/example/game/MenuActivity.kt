@@ -12,18 +12,27 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.app
 import com.google.firebase.ktx.initialize
 
+var userId: String? = null
 
 class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
-    private lateinit var auth: FirebaseAuth;
+    //private lateinit var auth: FirebaseAuth;
     private lateinit var button: Button;
     private lateinit var textView: TextView;
     private  var user: FirebaseUser? = null;
+
+    val database: DatabaseReference = FirebaseDatabase.getInstance().reference
+    // Аутентификация пользователя
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private var animationView: LottieAnimationView? = null
 
@@ -53,23 +62,156 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         // RegLogUser part
-        auth = FirebaseAuth.getInstance();
-        button = findViewById(R.id.logout);
-        textView = findViewById(R.id.user_details);
-        user = auth.currentUser;
+//        auth = FirebaseAuth.getInstance();
+//        button = findViewById(R.id.logout);
+//        textView = findViewById(R.id.user_details)
+//        user = auth.currentUser;
 //        if (user == null) {
 //            val intent = Intent(applicationContext, Login::class.java);
 //            startActivity(intent);
 //            finish();
 //        }
 //        else {
-//            val text = user!!.email?.removeSuffix("@whatever.ru")
-//            textView.text = text;
+//            val email = user!!.email?.removeSuffix("@whatever.ru")
+//            textView.text = email;
 //        }
-        button.setOnClickListener(View.OnClickListener {
-            onClick(it);
-        });
+//        button.setOnClickListener(View.OnClickListener {
+//            onClick(it);
+//        })
+        val email = "login${(0..10).random()}"
+        val username = email
+        val password = "pass${(0..10).random()}"
 
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                // Регистрация успешна, сохраняем данные пользователя и обновляем game1Score
+                val userId = auth.currentUser?.uid
+                if (userId != null) {
+                    val userRef = database.child("users").child(userId)
+                    val gameStatsRef = userRef.child("gameStats")
+
+                    userRef.child("username").setValue(username)
+                    gameStatsRef.child("game1Score").setValue(0)
+                        .addOnCompleteListener { game1ScoreTask ->
+                            if (game1ScoreTask.isSuccessful) {
+                                // Успешно обновлено значение параметра "game1Score"
+                                // updateGame1Score(gameStatsRef)
+                            } else {
+                                // Обработка ошибок при обновлении значения параметра "game1Score"
+                            }
+                        }
+                }
+            } else {
+                // Обработка ошибок при регистрации пользователя
+            }
+        }
+
+        val loginButton: Button = findViewById(R.id.loginButton)
+        loginButton.setOnClickListener {
+            val email = "check@mail.ru"// получите значение email от пользователя
+            val password = "check1234567"// получите значение пароля от пользователя
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { signInTask ->
+                if (signInTask.isSuccessful) {
+                    val userId = auth.currentUser?.uid
+                    Log.d("Firebase", "$userId, вход успешен")
+                // Вход успеше
+                // Вы можете выполнить дополнительные действия после успешного входа пользователя, например, переход на другой экран
+                } else {
+                    Log.d("Firebase", "Не удалось войти: ${signInTask.exception}")
+                // Обработка ошибок при входе пользователя
+                }
+            }
+        }
+
+        val debugButton: Button = findViewById(R.id.debugButton)
+        debugButton.setOnClickListener {
+            // Получаем ссылку на базу данных Firebase
+            val database = FirebaseDatabase.getInstance()
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val email = database.reference.child("users").child(userId!!).child("email")
+            email.setValue(FirebaseAuth.getInstance().currentUser?.email)
+            database.reference.child("users").child(userId!!).child("password")
+
+
+            // Проверяем, что пользователь авторизован
+            if (userId != null) {
+                Log.d("Firebase", "Статистика увеличена (можно считать)-2")
+                // Получаем ссылку на узел "gameStats" для данного пользователя
+                val gameStatsRef = database.reference.child("users").child(userId).child("gameStats")
+
+                // Увеличиваем значение параметра "game1Score" на единицу
+                gameStatsRef.child("game1Score").addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val currentScore = dataSnapshot.getValue(Int::class.java) ?: 0
+                        val newScore = currentScore + 1
+                        gameStatsRef.child("game1Score").setValue(newScore)
+                            .addOnSuccessListener {
+                                Log.d("Debug", "Успешно обновлено значение параметра game1Score")
+                            }
+                            .addOnFailureListener { error ->
+                                Log.d("Debug", "Ошибка при обновлении значения параметра game1Score")
+                            }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Обработка ошибок при чтении данных
+                    }
+                })
+            }
+        }
+
+//        // Запись статистики игры пользователя
+//        val gameStatsRef = database.child("users").child(auth.currentUser?.uid ?: "").child("gameStats")
+//        gameStatsRef.child("game1Score").setValue((0..100).random())
+//        gameStatsRef.child("game2Score").setValue((0..100).random())
+//        gameStatsRef.child("game3Score").setValue((0..100).random())
+
+//        // Чтение статистики игры пользователя
+//        gameStatsRef.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                val game1Score = dataSnapshot.child("game1Score").value
+//                val game2Score = dataSnapshot.child("game2Score").value
+//                val game3Score = dataSnapshot.child("game3Score").value
+//                // Обновление UI с полученной статистикой игр
+//            }
+
+
+
+
+        // Получаем ссылку на корневой узел базы данных
+        val databaseRef = FirebaseDatabase.getInstance().reference
+
+        // Создаем новый узел "users" и получаем ссылку на него
+        val usersRef = databaseRef.child("users")
+
+        // Создаем новый уникальный идентификатор для пользователя
+        val userId = usersRef.push().key
+
+// Создаем объект данных пользователя
+        val userData = HashMap<String, Any>()
+        userData["username"] = "John"
+        userData["email"] = "check@mail.ru"
+        userData["password"] = "check1234567"
+        userData["age"] = 25
+
+// Создаем объект данных статистики игры
+        val gameStatsData = HashMap<String, Any>()
+        gameStatsData["game1Score"] = 1
+        gameStatsData["game2Score"] = 2
+        gameStatsData["game3Score"] = 3
+
+// Добавляем данные статистики игры в данные пользователя
+        userData["gameStats"] = gameStatsData
+
+// Добавляем данные пользователя в базу данных
+        usersRef.child(userId!!).setValue(userData)
+            .addOnSuccessListener {
+                // Данные успешно добавлены в базу данных
+            }
+            .addOnFailureListener { error ->
+                // Ошибка при добавлении данных в базу данных
+            }
     }
 
     override fun onClick(v: View?) {
