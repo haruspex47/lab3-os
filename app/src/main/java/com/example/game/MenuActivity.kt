@@ -23,11 +23,13 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     //private lateinit var auth: FirebaseAuth;
     private lateinit var button: Button;
     private lateinit var textView: TextView;
+    private lateinit var email: String;
+    private lateinit var password: String;
     private  var user: FirebaseUser? = null;
 
     val database: DatabaseReference = FirebaseDatabase.getInstance().reference
     // Аутентификация пользователя
-    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    var auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private var animationView: LottieAnimationView? = null
 
@@ -37,9 +39,9 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
         Log.d("Debug", "Привет, мир!")
 
-        animationView = findViewById(R.id.animationView)
-        animationView?.setAnimation(R.raw.tumbnail)
-        animationView?.playAnimation()
+//        animationView = findViewById(R.id.animationView)
+//        animationView?.setAnimation(R.raw.tumbnail)
+//        animationView?.playAnimation()
 
         val playButton: Button = findViewById(R.id.playButton)
         playButton.setOnClickListener {
@@ -61,72 +63,70 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
             startKNB()
         }
 
-        // RegLogUser part
-//        auth = FirebaseAuth.getInstance();
-//        button = findViewById(R.id.logout);
-//        textView = findViewById(R.id.user_details)
-//        user = auth.currentUser;
-//        if (user == null) {
-//            val intent = Intent(applicationContext, Login::class.java);
-//            startActivity(intent);
-//            finish();
+//         RegLogUser part
+        auth = FirebaseAuth.getInstance();
+        button = findViewById(R.id.logout);
+        textView = findViewById(R.id.user_details)
+        user = auth.currentUser;
+        if (user == null) {
+            val intent = Intent(applicationContext, Login::class.java);
+            startActivity(intent);
+            finish();
+        }
+        else {
+            email = user!!.email?.removeSuffix("@whatever.ru").toString()
+            textView.text = email;
+        }
+        button.setOnClickListener(View.OnClickListener {
+            onClick(it);
+        })
+//        val username = email
+//        val playerStatsButton: Button = findViewById(R.id.playerStatsButton)
+//        playerStatsButton.setOnClickListener {
+//            val intent = Intent(this, PlayerStatsActivity::class.java)
+//            startActivity(intent)
 //        }
-//        else {
-//            val email = user!!.email?.removeSuffix("@whatever.ru")
-//            textView.text = email;
+//
+//        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+//            if (task.isSuccessful) {
+//                // Регистрация успешна, сохраняем данные пользователя и обновляем game1Score
+//                val userId = auth.currentUser?.uid
+//                if (userId != null) {
+//                    val userRef = database.child("users").child(userId)
+//                    val gameStatsRef = userRef.child("gameStats")
+//
+//                    userRef.child("username").setValue(username)
+//                    gameStatsRef.child("game1Score").setValue(0)
+//                        .addOnCompleteListener { game1ScoreTask ->
+//                            if (game1ScoreTask.isSuccessful) {
+//                                // Успешно обновлено значение параметра "game1Score"
+//                                // updateGame1Score(gameStatsRef)
+//                            } else {
+//                                // Обработка ошибок при обновлении значения параметра "game1Score"
+//                            }
+//                        }
+//                }
+//            } else {
+//                // Обработка ошибок при регистрации пользователя
+//            }
 //        }
-//        button.setOnClickListener(View.OnClickListener {
-//            onClick(it);
-//        })
-        val email = "login${(0..10).random()}"
-        val username = email
-        val password = "pass${(0..10).random()}"
-        val playerStatsButton: Button = findViewById(R.id.playerStatsButton)
-        playerStatsButton.setOnClickListener {
-            val intent = Intent(this, PlayerStatsActivity::class.java)
-            startActivity(intent)
-        }
 
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
-            if (task.isSuccessful) {
-                // Регистрация успешна, сохраняем данные пользователя и обновляем game1Score
-                val userId = auth.currentUser?.uid
-                if (userId != null) {
-                    val userRef = database.child("users").child(userId)
-                    val gameStatsRef = userRef.child("gameStats")
-
-                    userRef.child("username").setValue(username)
-                    gameStatsRef.child("game1Score").setValue(0)
-                        .addOnCompleteListener { game1ScoreTask ->
-                            if (game1ScoreTask.isSuccessful) {
-                                // Успешно обновлено значение параметра "game1Score"
-                                // updateGame1Score(gameStatsRef)
-                            } else {
-                                // Обработка ошибок при обновлении значения параметра "game1Score"
-                            }
-                        }
-                }
-            } else {
-                // Обработка ошибок при регистрации пользователя
-            }
-        }
-
-        val loginButton: Button = findViewById(R.id.loginButton)
-        loginButton.setOnClickListener {
-            val email = "check@mail.ru"// получите значение email от пользователя
-            val password = "check1234567"// получите значение пароля от пользователя
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { signInTask ->
-                if (signInTask.isSuccessful) {
-                    val userId = auth.currentUser?.uid
-                    Log.d("Firebase", "$userId, вход успешен")
-                // Вход успешен
-                // Вы можете выполнить дополнительные действия после успешного входа пользователя, например, переход на другой экран
-                } else {
-                    Log.d("Firebase", "Не удалось войти: ${signInTask.exception}")
-                // Обработка ошибок при входе пользователя
-                }
-            }
-        }
+//        val loginButton: Button = findViewById(R.id.loginButton)
+//        loginButton.setOnClickListener {
+//            val email = "check@mail.ru"// получите значение email от пользователя
+//            val password = "check1234567"// получите значение пароля от пользователя
+//            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { signInTask ->
+//                if (signInTask.isSuccessful) {
+//                    val userId = auth.currentUser?.uid
+//                    Log.d("Firebase", "$userId, вход успешен")
+//                // Вход успешен
+//                // Вы можете выполнить дополнительные действия после успешного входа пользователя, например, переход на другой экран
+//                } else {
+//                    Log.d("Firebase", "Не удалось войти: ${signInTask.exception}")
+//                // Обработка ошибок при входе пользователя
+//                }
+//            }
+//        }
 
         val debugButton: Button = findViewById(R.id.debugButton)
         debugButton.setOnClickListener {

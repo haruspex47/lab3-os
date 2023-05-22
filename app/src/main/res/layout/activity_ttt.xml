@@ -33,6 +33,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/currentPlayerTextView" />
 
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/circle"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="-1dp"
+        tools:layout_editor_absoluteY="77dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/zerocool"
+        android:text="Player 1"
+        android:textSize="30dp"
+        tools:layout_editor_absoluteX="68dp"
+        tools:layout_editor_absoluteY="93dp"
+        tools:ignore="MissingConstraints" />
+
     <include
         layout="@layout/buttons_ttt"
         android:layout_width="0dp"
@@ -43,31 +61,36 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.244"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="70dp"/>
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/cross"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="317dp"
+        tools:layout_editor_absoluteY="646dp" />
 
     <TextView
-        android:id="@+id/timerTextView"
-        android:layout_width="96dp"
-        android:layout_height="53dp"
-        android:layout_marginEnd="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/zerocool"
-        android:text="0"
-        android:textColor="#FF6392"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Player 2"
+        android:textSize="30dp"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="48dp"></TextView>
+        tools:layout_editor_absoluteX="173dp"
+        tools:layout_editor_absoluteY="662dp" />
 
-
-    <!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:backgroundTint="#FFE45E"-->
-<!--        android:fontFamily="@font/zerocool"-->
-<!--        android:text="@string/logout"-->
-<!--        android:textSize="20dp"-->
-<!--        tools:ignore="MissingConstraints"-->
-<!--        tools:layout_editor_absoluteX="273dp"-->
-<!--        tools:layout_editor_absoluteY="29dp" />-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FFE45E"
+        android:fontFamily="@font/zerocool"
+        android:text="@string/logout"
+        android:textSize="20dp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="265dp"
+        tools:layout_editor_absoluteY="85dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
