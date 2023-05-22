@@ -8,6 +8,7 @@ import java.net.ServerSocket
 import java.net.Socket
 
 class Server {
+    private var _indexes: Array<Int> = arrayOf()
     private val serverSocket: ServerSocket = ServerSocket(1234)
     private var guessedNumber: Int = 0
     private var all_players: Array<MutableList<Player>> = arrayOf(
@@ -40,6 +41,9 @@ class Server {
             p1.enemy = p2
             guessedNumber = (1..9).random() // TODO: исправить
             println("Загадано число ${guessedNumber}")
+            _indexes = arrayOf(0, 1, 2)
+            _indexes.shuffle()
+
 
             Thread(p2).start()
             Thread(p1).start()
@@ -52,6 +56,8 @@ class Server {
 
 
     private inner class Player(val clientSocket: Socket) : Runnable {
+        private val indexes: MutableList<Int> = mutableListOf(0, 1, 2)
+        private var countDuelQue: Int = 3
         val id: Int = id_count // TODO @a1sarpi
         var gm: Game
         private val reader: BufferedReader
@@ -59,6 +65,8 @@ class Server {
         val email: String
         var win: Boolean = false
         lateinit var enemy: Player
+
+        private var correct = "-111"
 
         init {
             reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
@@ -162,6 +170,7 @@ class Server {
                     println("Второй игрок ($id) согласился на дуэль")
                     onDuel()
                     line = reader.readLine()
+                    line = reader.readLine()
                 }
                 if (enemy.win) {
                     onWin(line.toInt())
@@ -186,12 +195,20 @@ class Server {
                 enemy.writer.flush()
                 enemy.writer.println("${number[1]}") // врагу
                 enemy.writer.flush()
-                var correct = reader.readLine()
+                correct = reader.readLine()
                 println("Игрок $id прислал данные $correct")
                 enemy.writer.println("${correct}") // врагу
                 enemy.writer.flush()
                 if (correct == "duel") {// !!!
-                    onDuel()
+//                    onDuel()
+                    writer.println(_indexes[countDuelQue - 1].toString())
+                    writer.flush()
+                    countDuelQue--
+                    correct = reader.readLine()
+                    println("Началась дуэль, при этом ответ игрока $id $correct ($number)")
+                    enemy.writer.println(correct)
+                    enemy.writer.flush()
+                    correct = reader.readLine()
                 }
                 if ((correct == "true") and
                         ((number[0].toInt() == 0) or (number[0].toInt() == 5))) { // !!! MAX_ROW == 5
@@ -204,11 +221,16 @@ class Server {
             }
         }
 
-        private fun onDuel() {
+        private fun onDuel() : String {
+            writer.println(_indexes[countDuelQue - 1].toString())
+            writer.flush()
+            countDuelQue--
             var correct = reader.readLine()
             println("Началась дуэль, при этом ответ игрока $id $correct")
             enemy.writer.println(correct)
             enemy.writer.flush()
+
+            return correct
         }
 
         fun rannum() {

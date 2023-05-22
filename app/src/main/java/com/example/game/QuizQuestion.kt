@@ -15,6 +15,8 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 
 class QuizQuestion : ComponentActivity() {
+    private var bool_ret: Boolean = false
+    private var extr: Bundle? = null
     private lateinit var Qtv: TextView
     private var ansButtons: MutableList<Button> = mutableListOf()
 
@@ -24,6 +26,8 @@ class QuizQuestion : ComponentActivity() {
 
     var num: Int = 0
     var ret: Int = -111
+
+    var serverRandom: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,72 +51,137 @@ class QuizQuestion : ComponentActivity() {
         ansButtons.add(findViewById(R.id.ans3))
         ansButtons.add(findViewById(R.id.ans4))
 
-        num = (0 until enableQue.size).random()
-        Qtv.text = enableQue[num].que
-        val ans = enableQue[num].ans
-        ansButtons[0].text = ans[0]
-        ansButtons[1].text = ans[1]
-        ansButtons[2].text = ans[2]
-        ansButtons[3].text = ans[3]
-        ansButtons[0].setOnClickListener {
-            enableQue[num].checkAnswer(0)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-            end()
-        }
-        ansButtons[1].setOnClickListener {
-            enableQue[num].checkAnswer(1)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-            end()
-        }
-        ansButtons[2].setOnClickListener {
-            enableQue[num].checkAnswer(2)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-            end()
-        }
-        ansButtons[3].setOnClickListener {
-            enableQue[num].checkAnswer(3)
-            for (buttons in ansButtons)
-                buttons.isEnabled = false
-            end()
-        }
 
+        extr = intent.extras
+        var Que = enableDuelQue[0]
+        if (extr != null) {
+            if (!extr!!.getBoolean("flag", false)) {
+                num = (0 until enableQue.size).random()
+                Que = enableQue[num]
+                Log.d("Debug", Que.que)
+                Qtv.text = Que.que
+                val ans = Que.ans
+                ansButtons[0].text = ans[0]
+                ansButtons[1].text = ans[1]
+                ansButtons[2].text = ans[2]
+                ansButtons[3].text = ans[3]
+                ansButtons[0].setOnClickListener {
+                    Que.checkAnswer(0)
+                    for (buttons in ansButtons)
+                        buttons.isEnabled = false
+                    bool_ret = Que.correct
+                    end()
+                }
+                ansButtons[1].setOnClickListener {
+                    Que.checkAnswer(1)
+                    for (buttons in ansButtons)
+                        buttons.isEnabled = false
+                    bool_ret = Que.correct
+                    end()
+                }
+                ansButtons[2].setOnClickListener {
+                    Que.checkAnswer(2)
+                    for (buttons in ansButtons)
+                        buttons.isEnabled = false
+                    bool_ret = Que.correct
+                    end()
+                }
+                ansButtons[3].setOnClickListener {
+                    Que.checkAnswer(3)
+                    for (buttons in ansButtons)
+                        buttons.isEnabled = false
+                    bool_ret = Que.correct
+                    end()
+                }
+
+            } else {
+                GlobalScope.launch(Dispatchers.IO) {
+                    serverRandom = reader.readLine().toInt()
+                    Log.d("Debug", "Прислано serverRandom: $serverRandom, ${enableDuelQue[serverRandom].que}")
+                    Que = enableDuelQue[serverRandom]
+                    launch(Dispatchers.Main) {
+                        Log.d("Debug", Que.que)
+                        Qtv.text = Que.que
+                        val ans = Que.ans
+                        ansButtons[0].text = ans[0]
+                        ansButtons[1].text = ans[1]
+                        ansButtons[2].text = ans[2]
+                        ansButtons[3].text = ans[3]
+                        ansButtons[0].setOnClickListener {
+                            Que.checkAnswer(0)
+                            for (buttons in ansButtons)
+                                buttons.isEnabled = false
+                            bool_ret = Que.correct
+                            end()
+                        }
+                        ansButtons[1].setOnClickListener {
+                            Que.checkAnswer(1)
+                            for (buttons in ansButtons)
+                                buttons.isEnabled = false
+                            bool_ret = Que.correct
+                            end()
+                        }
+                        ansButtons[2].setOnClickListener {
+                            Que.checkAnswer(2)
+                            for (buttons in ansButtons)
+                                buttons.isEnabled = false
+                            bool_ret = Que.correct
+                            end()
+                        }
+                        ansButtons[3].setOnClickListener {
+                            Que.checkAnswer(3)
+                            for (buttons in ansButtons)
+                                buttons.isEnabled = false
+                            bool_ret = Que.correct
+                            end()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun end() {
-        Log.d("Debug", "В классе QuizQUestion запущена функция end(), при этом правильность ответа: ${enableQue[num].correct}")
-        var bool_ret: Boolean = enableQue[num].correct
+        if (extr!!.getBoolean("flag", false)) {
+            Log.d("Debug", "server rndm: $serverRandom, ques: ${enableDuelQue[serverRandom].que}")
+        }
+
+        Log.d("Debug", "В классе QuizQUestion запущена функция end(), при этом правильность ответа: ${bool_ret}")
         if (bool_ret)
             ret = 1
         else
             ret = 0
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                writer.println("${enableQue[num].correct}")
+                writer.println("${bool_ret}")
                 writer.flush()
 
-                val b = intent.extras
-
-                if (b != null) {
-                    if (b.getBoolean("flag", false)) {
+                if (extr != null) {
+                    if (extr!!.getBoolean("flag", false)) {
                         var str = reader.readLine()
                         if (str == "true") {
-                            if (enableQue[num].correct == false) {
+                            if (!bool_ret) {
                                 Log.d("Debug", "кто-то проиграл вопрос в дуэли")
+                                writer.println("false")
+                                writer.flush()
                                 ret = -1
                             } else {
                                 ret = 0
+                                writer.println("false")
+                                writer.flush()
                                 Log.d("Debug", "здесь ничья")
                             }
                         }
                         else if (str == "false") {
-                            if (enableQue[num].correct == true) {
+                            if (bool_ret) {
                                 Log.d("Debug", "кто-то выиграл вопрос в дуэли")
+                                writer.println("true")
+                                writer.flush()
                                 ret = 1
                             } else {
                                 ret = 0
+                                writer.println("false")
+                                writer.flush()
                                 Log.d("Debug", "здесь ничья")
                             }
                         }
@@ -127,11 +196,10 @@ class QuizQuestion : ComponentActivity() {
 //                            ret = -1
                         Log.d("Debug", "Пройден особый вопрос")
                     } else {
+                        enableQue.removeAt(num)
                         Log.d("Debug", "Пройден обычный вопрос")
                     }
                 }
-
-                enableQue.removeAt(num)
 
                 val resultCode = Activity.RESULT_OK
                 val intent = Intent()

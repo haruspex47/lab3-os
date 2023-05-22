@@ -28,6 +28,7 @@ import java.net.Socket
 const val MAX_ROW: Int = 5
 const val MAX_COLUMN: Int = 2
 var enableQue: MutableList<Question> = mutableListOf()
+var enableDuelQue: Array<Question> = arrayOf()
 var flag: Boolean = true
 
 class Quiz : AppCompatActivity() {
@@ -122,6 +123,7 @@ class Quiz : AppCompatActivity() {
                         enemyCastle = buttons.last()
                     }
                     myCastle.status = 1
+                    enemyCastle.status = -1
                     enButtons.clear()
                     //enButtons.add(myCastle)
 
@@ -158,9 +160,29 @@ class Quiz : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
+        allQuestionsInit()
+    }
 
-
-        enableQue.add(
+    private fun allQuestionsInit() {
+        enableDuelQue = arrayOf(
+            Question(
+                "Какой русский писатель является автором романа \"Война и мир\"?",
+                arrayOf("Лев Толстой", "Фёдор Достоевский", "Антон Чехов", "Иван Тургенев"),
+                0
+            )
+        ,
+            Question(
+                "Какое произведение Фёдора Достоевского начинается со слов: \"В начале июля, в чрезвычайно жаркое время, под вечер, один молодой человек вышел из своей каморки, которую нанимал от жильцов в С-м переулке, на улицу и медленно, как бы в нерешимости, отправился к К-ну мосту\"?",
+                arrayOf("Преступление и наказание", "Идиот", "Бесы", "Братья Карамазовы"),
+                0
+            )
+        ,
+            Question(
+                "Кто из этих писателей является автором произведения \"Мёртвые души\"?",
+                arrayOf("Николай Гоголь", "Михаил Лермонтов", "Иван Гончаров", "Александр Пушкин"),
+                0
+            )
+                    ,
             Question(
                 "Какая формула определяет комплексную экспоненту?",
                 arrayOf("e^(i*x)", "sin(x)", "cos(x)", "ln(x)"),
@@ -170,7 +192,12 @@ class Quiz : AppCompatActivity() {
         enableQue.add(
             Question(
                 "Какая функция является гармонической?",
-                arrayOf("f(z) = u(x, y) + i*v(x, y)", "f(z) = u(x, y) - i*v(x, y)", "f(z) = u(x, y) * v(x, y)", "f(z) = u(x, y) / v(x, y)"),
+                arrayOf(
+                    "f(z) = u(x, y) + i*v(x, y)",
+                    "f(z) = u(x, y) - i*v(x, y)",
+                    "f(z) = u(x, y) * v(x, y)",
+                    "f(z) = u(x, y) / v(x, y)"
+                ),
                 0
             )
         )
@@ -184,21 +211,36 @@ class Quiz : AppCompatActivity() {
         enableQue.add(
             Question(
                 "Что такое принцип максимума модуля?",
-                arrayOf("Если f(z) голоморфна в ограниченной и замкнутой области, то |f(z)| достигает своего максимума на границе области.", "Если f(z) голоморфна во всей комплексной плоскости, то |f(z)| неограничена.", "Если f(z) является гармонической функцией, то |f(z)| неотрицательна.", "Если f(z) аналитична в точке z_0, то |f(z)| имеет непрерывную производную в этой точке."),
+                arrayOf(
+                    "Если f(z) голоморфна в ограниченной и замкнутой области, то |f(z)| достигает своего максимума на границе области.",
+                    "Если f(z) голоморфна во всей комплексной плоскости, то |f(z)| неограничена.",
+                    "Если f(z) является гармонической функцией, то |f(z)| неотрицательна.",
+                    "Если f(z) аналитична в точке z_0, то |f(z)| имеет непрерывную производную в этой точке."
+                ),
                 0
             )
         )
         enableQue.add(
             Question(
                 "Что такое сопряженное пространство в функциональном анализе?",
-                arrayOf("Для банахова пространства X, сопряженным пространством X* является пространство линейных непрерывных функционалов на X.", "Сопряженным пространством является пространство функций, у которых все производные равны нулю.", "Сопряженным пространством является пространство функций, у которых интегралы равны нулю.", "Сопряженным пространством является пространство функций, у которых все точки являются особенностями."),
+                arrayOf(
+                    "Для банахова пространства X, сопряженным пространством X* является пространство линейных непрерывных функционалов на X.",
+                    "Сопряженным пространством является пространство функций, у которых все производные равны нулю.",
+                    "Сопряженным пространством является пространство функций, у которых интегралы равны нулю.",
+                    "Сопряженным пространством является пространство функций, у которых все точки являются особенностями."
+                ),
                 0
             )
         )
         enableQue.add(
             Question(
                 "Что такое компактный оператор?",
-                arrayOf("Оператор, переводящий ограниченное множество в предкомпактное.", "Оператор, переводящий компактное множество в ограниченное.", "Оператор, переводящий предкомпактное множество в компактное.", "Оператор, переводящий ограниченное множество в компактное."),
+                arrayOf(
+                    "Оператор, переводящий ограниченное множество в предкомпактное.",
+                    "Оператор, переводящий компактное множество в ограниченное.",
+                    "Оператор, переводящий предкомпактное множество в компактное.",
+                    "Оператор, переводящий ограниченное множество в компактное."
+                ),
                 0 // 2
             )
         )
@@ -212,21 +254,36 @@ class Quiz : AppCompatActivity() {
         enableQue.add(
             Question(
                 "Какое условие должно выполняться для функции, чтобы она была аналитической в точке?",
-                arrayOf("Функция должна быть дифференцируемой в окрестности данной точки.", "Функция должна быть непрерывной в окрестности данной точки.", "Функция должна быть голоморфной в окрестности данной точки.", "Функция должна быть гармонической в окрестности данной точки."),
+                arrayOf(
+                    "Функция должна быть дифференцируемой в окрестности данной точки.",
+                    "Функция должна быть непрерывной в окрестности данной точки.",
+                    "Функция должна быть голоморфной в окрестности данной точки.",
+                    "Функция должна быть гармонической в окрестности данной точки."
+                ),
                 0
             )
         )
         enableQue.add(
             Question(
                 "Что такое функционал в функциональном анализе?",
-                arrayOf("Линейный оператор, переводящий векторное пространство в скаляры.", "Линейный оператор, переводящий скаляры в векторное пространство.", "Функция, отображающая векторное пространство в скаляры.", "Функция, отображающая скаляры в векторное пространство."),
+                arrayOf(
+                    "Линейный оператор, переводящий векторное пространство в скаляры.",
+                    "Линейный оператор, переводящий скаляры в векторное пространство.",
+                    "Функция, отображающая векторное пространство в скаляры.",
+                    "Функция, отображающая скаляры в векторное пространство."
+                ),
                 0 // 2
             )
         )
         enableQue.add(
             Question(
                 "Что такое базис в функциональном анализе?",
-                arrayOf("Семейство элементов, линейная комбинация которых может представлять любой элемент векторного пространства.", "Семейство элементов, для которых выполняется равенство f(x) = 0.", "Семейство элементов, для которых выполняется неравенство f(x) > 0.", "Семейство элементов, линейная комбинация которых равна нулю."),
+                arrayOf(
+                    "Семейство элементов, линейная комбинация которых может представлять любой элемент векторного пространства.",
+                    "Семейство элементов, для которых выполняется равенство f(x) = 0.",
+                    "Семейство элементов, для которых выполняется неравенство f(x) > 0.",
+                    "Семейство элементов, линейная комбинация которых равна нулю."
+                ),
                 0
             )
         )
@@ -255,6 +312,7 @@ class Quiz : AppCompatActivity() {
                     writer.println("duel")
                     writer.flush()
                     toDuelQuestion()
+                    Log.d("Debug", "Дождались конца дуэли!")
                 }
                 if ((correct == "true") and (getButton(currentBattleId) == myCastle)) { // TODO: !!! поменять
                     // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
@@ -273,15 +331,21 @@ class Quiz : AppCompatActivity() {
                         getButton(currentBattleId).status = -1
                         // TODO: gui @a1sarpi
                     }
-                    enableAllButtons()
-                    // Смена текущего игрока
-                    currentPlayer = if (currentPlayer == 1) 2 else 1
-                    Log.d("Debug", "currentPlayer = $currentPlayer, playerEmail = $playerEmail, enemyEmail = $enemyEmail, playerId = $player_id")
-                    tv.text = "Сейчас ход игрока " +
-                            if (currentPlayer == player_id + 1)
-                                playerEmail?.removeSuffix("@whatever.ru")
-                            else
-                                enemyEmail?.removeSuffix("@whatever.ru")
+
+                    if (correct != "duel") {
+                        enableAllButtons()
+                        // Смена текущего игрока
+                        currentPlayer = if (currentPlayer == 1) 2 else 1
+                        Log.d(
+                            "Debug",
+                            "currentPlayer = $currentPlayer, playerEmail = $playerEmail, enemyEmail = $enemyEmail, playerId = $player_id"
+                        )
+                        tv.text = "Сейчас ход игрока " +
+                                if (currentPlayer == player_id + 1)
+                                    playerEmail?.removeSuffix("@whatever.ru")
+                                else
+                                    enemyEmail?.removeSuffix("@whatever.ru")
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -415,16 +479,25 @@ class Quiz : AppCompatActivity() {
         var flag = true
         for (buttonsId in ids) {
             for (neighborsId in getButton(buttonsId).getNeighbors()) {
-                if (getButton(neighborsId).status == 1) {
+                if (getButton(neighborsId).status == 1) { // если есть хоть один мой сосед предлагаемой кнопки
+                    Log.d(
+                        "Debug",
+                        "Не будем трогать кнопку $buttonsId, поскольку есть мой сосед $neighborsId"
+                    )
                     flag = false
                     break
                 }
+            }
                 if (!flag) {
                     flag = true
                 } else {
+                    Log.d(
+                        "Debug",
+                        "Будем трогать кнопку $buttonsId, поскольку нет моих соседей"
+                    )
                     getButton(buttonsId).bt.isEnabled = false
+                    enButtons.remove(getButton(buttonsId))
                 }
-            }
         }
     }
 
@@ -465,25 +538,27 @@ class Quiz : AppCompatActivity() {
             showDialog()
         } else {
             enableButtons(getButton(id).getNeighbors())
+            enableAllButtons()
             // Смена текущего игрока
             currentPlayer = if (currentPlayer == 1) 2 else 1
             tv.text = "Сейчас ход игрока " +
                     if (currentPlayer == player_id + 1) playerEmail?.removeSuffix("@whatever.ru")
                     else enemyEmail?.removeSuffix("@whatever.ru")
 
-
-            disableAllButtons()
-
-            // Через сервер ждём ответ другого игрока
-            waitForOtherPlayer()
+            if (currentPlayer != player_id + 1) {
+                disableAllButtons()
+                // Через сервер ждём ответ другого игрока
+                waitForOtherPlayer()
+            }
         }
     }
 
     private fun onLose(id: Pair<Int, Int>) {
         var flag: Boolean = true
-        getButton(id).status = -1
 
         if (getButton(id).status == 1) {
+            Log.d("Debug","Кнопка $id была нашей, но теперь вражеская")
+            getButton(id).status = -1
             disableButtons(getButton(id).getNeighbors())
 //            for (button in getButton(id).getNeighbors()) {
 //                for (button2 in getButton(button).getNeighbors()) {
@@ -500,6 +575,17 @@ class Quiz : AppCompatActivity() {
             for (button in getButton(id).getNeighbors()) {
                 // TODO: gui @a1sarpi
             }
+        }
+        enableAllButtons()
+        currentPlayer = if (currentPlayer == 1) 2 else 1
+        tv.text = "Сейчас ход игрока " +
+                if (currentPlayer == player_id + 1) playerEmail?.removeSuffix("@whatever.ru")
+                else enemyEmail?.removeSuffix("@whatever.ru")
+
+        if (currentPlayer != player_id + 1) {
+            disableAllButtons()
+            // Через сервер ждём ответ другого игрока
+            waitForOtherPlayer()
         }
 
         if (getButton(id) == myCastle) {
@@ -531,6 +617,10 @@ class Quiz : AppCompatActivity() {
             }
         }
 
+
+        //enemyCastle.status = -1
+        Log.d("Debug", "getButton(currentBattleId).status = ${getButton(currentBattleId).status}, id $currentBattleId")
+        Log.d("Debug", "enemyCastle: ${enemyCastle.getRow()} ${enemyCastle.getColumn()}")
         if (getButton(currentBattleId).status == -1) {
             toDuelQuestion()
         } else
@@ -543,6 +633,18 @@ class Quiz : AppCompatActivity() {
             onWin(currentBattleId)
         if (ret == -1)
             onLose(currentBattleId)
+        if (ret == 0) {
+            currentPlayer = if (currentPlayer == 1) 2 else 1
+            tv.text = "Сейчас ход игрока " +
+                    if (currentPlayer == player_id + 1) playerEmail?.removeSuffix("@whatever.ru")
+                    else enemyEmail?.removeSuffix("@whatever.ru")
+            enableAllButtons()
+            if (currentPlayer != player_id + 1) {
+                disableAllButtons()
+                // Через сервер ждём ответ другого игрока
+                waitForOtherPlayer()
+            }
+        }
     }
 
     private fun toQuestion() {
@@ -565,11 +667,16 @@ class Quiz : AppCompatActivity() {
 
 
     private fun resetGame() {
+        enableQue.clear()
+        allQuestionsInit()
+
         Log.d("Debug", "Вошли в функцию resetGame()")
         enButtons.clear()
         // TODO: ожидание сервера @a1sarpi
-        for (bt in buttons)
+        for (bt in buttons) {
             bt.bt.isEnabled = false
+            bt.status = 0
+        }
         gameOver = false
 
         GlobalScope.launch(Dispatchers.IO) {
@@ -585,6 +692,7 @@ class Quiz : AppCompatActivity() {
                         enemyCastle = buttons.last()
                     }
                     myCastle.status = 1
+                    enemyCastle.status = -1
                     enButtons.clear()
                     enemyEmail = reader.readLine()
                     Log.d("Debug.", "Id ${player_id}, Почта ${playerEmail}")
