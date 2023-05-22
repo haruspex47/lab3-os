@@ -157,7 +157,12 @@ class Server {
             enemy.win = false
             while (true) {
                 println("Сервер ждёт данные")
-                val line = reader.readLine()
+                var line = reader.readLine()
+                if (line == "duel") {
+                    println("Второй игрок ($id) согласился на дуэль")
+                    onDuel()
+                    line = reader.readLine()
+                }
                 if (enemy.win) {
                     onWin(line.toInt())
                     break
@@ -185,8 +190,9 @@ class Server {
                 println("Игрок $id прислал данные $correct")
                 enemy.writer.println("${correct}") // врагу
                 enemy.writer.flush()
-                if (correct == "duel") // !!!
+                if (correct == "duel") {// !!!
                     onDuel()
+                }
                 if ((correct == "true") and
                         ((number[0].toInt() == 0) or (number[0].toInt() == 5))) { // !!! MAX_ROW == 5
                     println("Игрок $id выиграл!")
@@ -199,7 +205,10 @@ class Server {
         }
 
         private fun onDuel() {
-            TODO("Not yet implemented")
+            var correct = reader.readLine()
+            println("Началась дуэль, при этом ответ игрока $id $correct")
+            enemy.writer.println(correct)
+            enemy.writer.flush()
         }
 
         fun rannum() {

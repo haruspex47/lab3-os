@@ -22,6 +22,8 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 
+// TODO: ничья по окончании вопросов + gui
+
 
 const val MAX_ROW: Int = 5
 const val MAX_COLUMN: Int = 2
@@ -245,12 +247,14 @@ class Quiz : AppCompatActivity() {
                     exitToMenu()
                 }
                 val xy = mutableListOf<Int>(response.toInt(), reader.readLine().toInt())
-                val correct = reader.readLine() // null, true, false
+                val correct = reader.readLine() // duel, true, false
                 Log.d("Debug", "Игрок получил данные $correct")
                 currentBattleId = Pair<Int, Int>(xy[0].toInt(), xy[1].toInt())
                 Log.d("Debug", "Id битвы сменился на $currentBattleId")
                 if (getButton(currentBattleId).status == 1) {
-                    onDuel(currentBattleId)
+                    writer.println("duel")
+                    writer.flush()
+                    toDuelQuestion()
                 }
                 if ((correct == "true") and (getButton(currentBattleId) == myCastle)) { // TODO: !!! поменять
                     // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
@@ -285,23 +289,30 @@ class Quiz : AppCompatActivity() {
         }
     }
 
-    suspend private fun onDuel(id: Pair<Int, Int>) {
+//    suspend private fun onDuel(id: Pair<Int, Int>) {
 //        toDuelQuestion()
 //        if (ret == 1) {
 //            onWin(id)
 //        } else if (ret == -1){
 //            onLose(id)
 //        }
-    }
+//    }
 
     private fun toDuelQuestion() {
-//        SocketHelper.clientSocket = clientSocket
+        Log.d("Debug", "Кажется, время для дуэли")
+        SocketHelper.clientSocket = clientSocket
 //        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 //            if (result.resultCode == Activity.RESULT_OK) {
 //                val data: Intent? = result.data
 //                ret = data?.getIntExtra("ret", -1)
 //            }
 //        }
+
+        val intent = Intent(this, QuizQuestion::class.java)
+        intent.putExtra("flag", true) // !!! нужно ли?
+        Log.d("Debug", "Пытаемся войти в класс QuizQuestion")
+        startActivityForResult(intent, 1)
+
 //
 //        val intent = Intent(this, QuizQuestion::class.java)
 //        intent.putExtra("flag", true)
@@ -401,7 +412,7 @@ class Quiz : AppCompatActivity() {
     }
 
     private fun disableButtons(ids: MutableList<Pair<Int, Int>>) {
-        var flag: Boolean = true
+        var flag = true
         for (buttonsId in ids) {
             for (neighborsId in getButton(buttonsId).getNeighbors()) {
                 if (getButton(neighborsId).status == 1) {
@@ -470,6 +481,7 @@ class Quiz : AppCompatActivity() {
 
     private fun onLose(id: Pair<Int, Int>) {
         var flag: Boolean = true
+        getButton(id).status = -1
 
         if (getButton(id).status == 1) {
             disableButtons(getButton(id).getNeighbors())
@@ -485,10 +497,16 @@ class Quiz : AppCompatActivity() {
 //                else
 //                    disableButtons(mutableListOf(button))
 //            }
-            getButton(id).status = -1
             for (button in getButton(id).getNeighbors()) {
                 // TODO: gui @a1sarpi
             }
+        }
+
+        if (getButton(id) == myCastle) {
+            // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
+            Log.d("Debug", "Вражеский игрок победил!")
+            gameOver = true
+            showDialog()
         }
     }
 
@@ -503,14 +521,20 @@ class Quiz : AppCompatActivity() {
                 writer.flush()
                 writer.println("${currentBattleId.second}")
                 writer.flush()
-                // Обновляем UI в основном потоке
+
+                if (getButton(currentBattleId).status == -1) {
+                    writer.println("duel")
+                    writer.flush()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
 
-        toQuestion()
-//        extracted(id)
+        if (getButton(currentBattleId).status == -1) {
+            toDuelQuestion()
+        } else
+            toQuestion()
     }
 
     private fun extracted(ret: Int?) {

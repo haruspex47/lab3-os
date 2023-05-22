@@ -98,16 +98,34 @@ class QuizQuestion : ComponentActivity() {
                 if (b != null) {
                     if (b.getBoolean("flag", false)) {
                         var str = reader.readLine()
-                        if (str == "1")
-                            ret = 1
-                        else if (str == "0")
-                            ret = 0
-                        else if (str == "-1")
-                            ret = -1
-                        if ((ret == -1) and (enableQue[num].correct))
-                            ret = 1
-                        if ((ret == 1) and !enableQue[num].correct)
-                            ret = -1
+                        if (str == "true") {
+                            if (enableQue[num].correct == false) {
+                                Log.d("Debug", "кто-то проиграл вопрос в дуэли")
+                                ret = -1
+                            } else {
+                                ret = 0
+                                Log.d("Debug", "здесь ничья")
+                            }
+                        }
+                        else if (str == "false") {
+                            if (enableQue[num].correct == true) {
+                                Log.d("Debug", "кто-то выиграл вопрос в дуэли")
+                                ret = 1
+                            } else {
+                                ret = 0
+                                Log.d("Debug", "здесь ничья")
+                            }
+                        }
+//                        else if (str == "-1") { // сервер решил, что кто-то проиграл
+//                            ret = -1
+//                            if (enableQue[num].correct)
+//                                ret = 1
+//                        }
+//                        if ((ret == -1) and (enableQue[num].correct))
+//                            ret = 1
+//                        if ((ret == 1) and !enableQue[num].correct)
+//                            ret = -1
+                        Log.d("Debug", "Пройден особый вопрос")
                     } else {
                         Log.d("Debug", "Пройден обычный вопрос")
                     }
