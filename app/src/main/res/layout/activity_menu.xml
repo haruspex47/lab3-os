@@ -45,6 +45,14 @@
         android:backgroundTint="#FFE45E"/>
 
     <Button
+        android:id="@+id/knbButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Играть в КНБ!"
+        android:fontFamily="@font/zerocool"
+        android:backgroundTint="#FFE45E"/>
+
+    <Button
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

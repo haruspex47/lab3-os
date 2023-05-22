@@ -54,4 +54,5 @@
     <string name="castle1_button">Castle I</string>
     <string name="title_activity_tic_tac_toe">TicTacToe</string>
     <string name="title_activity_player_stats">PlayerStatsActivity</string>
+    <string name="title_activity_knb">Knb</string>
 </resources>

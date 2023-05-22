@@ -56,6 +56,11 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
             startXO()
         }
 
+        val knbButton: Button = findViewById(R.id.knbButton)
+        knbButton.setOnClickListener {
+            startKNB()
+        }
+
         // RegLogUser part
 //        auth = FirebaseAuth.getInstance();
 //        button = findViewById(R.id.logout);
@@ -239,6 +244,13 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     private fun startXO() {
         Log.d("Debug", "Вход в игру 'Крестики-нолики'!")
         val intent = Intent(this, TicTacToe::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun startKNB() {
+        Log.d("Debug", "Вход в игру 'КНБ'!")
+        val intent = Intent(this, Knb::class.java)
         startActivity(intent)
         finish()
     }

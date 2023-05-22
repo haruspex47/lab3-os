@@ -17,6 +17,11 @@
         android:theme="@style/Theme.MyGame"
         tools:targetApi="31">
         <activity
+            android:name=".Knb"
+            android:exported="false"
+            android:label="@string/title_activity_knb"
+            android:theme="@style/Theme.MyGame" />
+        <activity
             android:name=".PlayerStatsActivity"
             android:exported="false"
             android:label="@string/title_activity_player_stats"
