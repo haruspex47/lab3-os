@@ -2,6 +2,7 @@ package com.example.game
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -43,9 +44,27 @@ class TicTacToe : ComponentActivity() {
 
     private lateinit var enemyEmail: String
 
+    private var remainingTime = 3 // оставшееся время в секундах
+    private lateinit var timerTextView: TextView
+
+    private val timer = object : CountDownTimer(3000, 1000) { // 30 секунд, с интервалом 1 секунда
+        override fun onTick(millisUntilFinished: Long) {
+            // Обновление отображения оставшегося времени
+            remainingTime = (millisUntilFinished / 1000).toInt()
+            updateTimerDisplay()
+        }
+
+        override fun onFinish() {
+            // Время истекло, игрок проигрывает
+            handleTimeout()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ttt)
+
+        timerTextView = findViewById(R.id.timerTextView)
 
         Log.d("Debug", "Вошли в игру крестики-нолики с почтой ${playerEmail}")
 
@@ -61,7 +80,6 @@ class TicTacToe : ComponentActivity() {
             findViewById(R.id.button8),
             findViewById(R.id.button9)
         )
-
 
         // Назначение слушателя нажатия кнопок
         for (i in 0..8) {
@@ -110,6 +128,7 @@ class TicTacToe : ComponentActivity() {
                                 "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
                             waitForOtherPlayer()
                         } else {
+                            startTurn()
                             tv.text = "Сейчас ход игрока ${playerEmail}"
                             enableAllButtons()
                         }
@@ -125,6 +144,7 @@ class TicTacToe : ComponentActivity() {
     }
 
     private fun waitForOtherPlayer() {
+        startTurn()
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val response = reader.readLine()
@@ -160,6 +180,8 @@ class TicTacToe : ComponentActivity() {
                     enableAllButtons()
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
+                    endTurn()
+                    startTurn()
                     tv.text = "Сейчас ход игрока " +
                             if (currentPlayer == player_id + 1)
                                 playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
@@ -233,6 +255,8 @@ class TicTacToe : ComponentActivity() {
                     Log.d("Debug", "number.first * 3 + number.second = ${number.first * 3 + number.second}")
                     Log.d("Debug", "butt: ${buttons[number.first*3 + number.second]}")
                     buttons[number.first * 3 + number.second].text = player_id.toString()
+                    endTurn()
+                    startTurn()
                     disableAllButtons()
                     if (gameOver) {
                         incrementStats()
@@ -440,5 +464,27 @@ class TicTacToe : ComponentActivity() {
         clientSocket.close()
         writer.close()
         reader.close()
+    }
+
+
+    private fun updateTimerDisplay() {
+        // Обновление отображения времени в вашем пользовательском интерфейсе
+        timerTextView.text = remainingTime.toString()
+    }
+
+    fun startTurn() {
+        Log.d("Debug", "Пошёл таймер")
+        timer.start()
+    }
+
+    fun endTurn() {
+        timer.cancel()
+    }
+
+
+    private fun handleTimeout() {
+        showDialog()
+        // Логика для обработки проигрыша игрока из-за истечения времени
+        // Например, отобразить сообщение о проигрыше и сбросить игровое состояние
     }
 }

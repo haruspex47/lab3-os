@@ -176,12 +176,12 @@ class Knb : ComponentActivity() {
             val gameStatsRef = database.reference.child("users").child(userId).child("gameStats")
 
             // Увеличиваем значение параметра "game1Score" на единицу
-            gameStatsRef.child("game1Score").addListenerForSingleValueEvent(object :
+            gameStatsRef.child("game2Score").addListenerForSingleValueEvent(object :
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val currentScore = dataSnapshot.getValue(Int::class.java) ?: 0
                     val newScore = currentScore + 1
-                    gameStatsRef.child("game1Score").setValue(newScore)
+                    gameStatsRef.child("game2Score").setValue(newScore)
                         .addOnSuccessListener {
                             // Успешно обновлено значение параметра "game1Score"
                         }
