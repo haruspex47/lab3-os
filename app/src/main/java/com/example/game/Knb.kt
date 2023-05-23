@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -29,7 +30,7 @@ import java.net.Socket
 
 class Knb : ComponentActivity() {
     val GAME_ID = "2"
-    private lateinit var buttons: Array<Button>
+    private lateinit var buttons: Array<ImageButton>
     private lateinit var buttonCls: Button
     private lateinit var winnerTextView: TextView
     private var currentPlayer: Int = 1
@@ -78,6 +79,7 @@ class Knb : ComponentActivity() {
         // TODO: загрузка сервера - фронтенд @a1sarpi
         GlobalScope.launch(Dispatchers.IO) {
             try {
+                Log.d("Server", "Пытаемся подключиться к серверу")
                 val serverAddress = "10.0.2.2" // IP-адрес сервера
                 val serverPort = 1234 // Порт сервера
 
@@ -105,7 +107,8 @@ class Knb : ComponentActivity() {
                             exitToMenu();
                         }
                         currentPlayer = 1
-                        tv = findViewById(R.id.currentPlayerTextView)
+                        tv = findViewById(R.id.currentPlayerTV)
+                        tv.text = "Вы играете с игроком $enemyEmail"
                         enableAllButtons()
                     }
                 } else {
@@ -119,12 +122,14 @@ class Knb : ComponentActivity() {
     }
 
     private fun enableAllButtons() {
+        Log.d("Debug", "Пытаемся включить кнопки")
         for (button in buttons) {
             button.isEnabled = true
         }
     }
 
     private fun disableAllButtons() {
+        Log.d("Debug", "Пытаемся выключить кнопки")
         for (button in buttons) {
             button.isEnabled = false
         }
@@ -132,7 +137,6 @@ class Knb : ComponentActivity() {
 
     private fun onButtonClicked(view: View?, id: Int) {
         // TODO: gui @a1sarpi
-        val button = view as Button
         var number = id
         disableAllButtons()
 
@@ -146,6 +150,7 @@ class Knb : ComponentActivity() {
                 var ans = _ans.toInt()
 
                 if (checkWin(id, ans) == 1) {
+                    Log.d("Debug", "В данной битве пользователь выиграл")
                     val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/win")!!
                     imageWin.setImageDrawable(w)
                     winnerTextView.setText("{$playerEmail} выиграл")
@@ -161,12 +166,14 @@ class Knb : ComponentActivity() {
                         }
                     }
                 } else if (checkWin(id, ans) == 0) {
+                    Log.d("Debug", "В данной битве ничья")
                     val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/draw")!!
                     imageWin.setImageDrawable(w)
                     winnerTextView.setText("Ничья")
                     writer.println("dontwin")
                     writer.flush()
                 } else if (checkWin(id, ans) == -1) {
+                    Log.d("Debug", "В данной битве пользователь проиграл")
                     val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/cross")!!
                     imageWin.setImageDrawable(w)
                     winnerTextView.setText("{$enemyEmail} выиграл")
@@ -179,6 +186,7 @@ class Knb : ComponentActivity() {
                 // UI в основном потоке
                 launch(Dispatchers.Main) {
                     if (gameOver) {
+                        Log.d("Debug", "Игра окончена")
                         disableAllButtons()
                         incrementStats()
                         gameOver = false

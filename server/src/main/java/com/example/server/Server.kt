@@ -170,7 +170,7 @@ class Server {
                         }
                     }
                 }
-                if (correct == "nobody") {
+                if (correct == "dontwin") {
                     println("Ничья в раунде!")
                 }
             }

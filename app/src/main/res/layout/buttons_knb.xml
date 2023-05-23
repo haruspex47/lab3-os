@@ -5,66 +5,25 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-<!--    <Button-->
-<!--        android:id="@+id/button1"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:text="rock"-->
-<!--        android:fontFamily="@font/zerocool"-->
-<!--        android:textSize="20sp"-->
-<!--        android:background="@drawable/rock"-->
-<!--        android:layout_columnWeight="0"-->
-<!--        >-->
-<!--    </Button>-->
-
-<!--    <Button-->
-<!--        android:id="@+id/button2"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:text="scis\nsors"-->
-<!--        android:fontFamily="@font/zerocool"-->
-<!--        android:textSize="20sp"-->
-<!--        android:background="@drawable/scissors"-->
-<!--        android:layout_columnWeight="1"-->
-<!--        />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/button3"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:text="paper"-->
-<!--        android:fontFamily="@font/zerocool"-->
-<!--        android:textSize="20sp"-->
-<!--        android:background="@drawable/paper"-->
-<!--        android:layout_columnWeight="1"-->
-<!--        android:layout_rowWeight="2"/>-->
-
-    <Button
+    <ImageButton
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/zerocool"
-        android:textSize="20dp"
-        app:icon="@drawable/rock">
+        android:src="@drawable/rock"
+        android:background="@drawable/button_background" />
 
-    </Button>
-
-    <Button
+    <ImageButton
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/zerocool"
-        app:icon="@drawable/scissors"
-        android:layout_columnWeight="1">
-    </Button>
+        android:src="@drawable/scissors"
+        android:background="@drawable/button_background" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:icon="@drawable/paper"
-        android:fontFamily="@font/zerocool"
-        android:src="@drawable/paper">
-    </Button>
+        android:src="@drawable/paper"
+        android:background="@drawable/button_background" />
 
 </LinearLayout>
