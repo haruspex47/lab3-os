@@ -144,15 +144,19 @@ class Server {
                     wins++
                     round--
                     if (round == 0) {
-                        if (wins > 3/2) {
+                        if (wins > 1) {
                             println("Игрок $id выиграл игру!")
+                            writer.println("win")
+                            writer.flush()
                             win = true
                             val ans = reader.readLine().toInt()
                             onWin(ans)
                             break
-                        } else if (enemy.wins > 3/2){
+                        } else if (enemy.wins > 1) {
                             println("Игрок $id проиграл игру!")
                             enemy.win = true
+                            writer.println("lose")
+                            writer.flush()
                             val ans = reader.readLine().toInt()
                             onWin(ans)
                             break

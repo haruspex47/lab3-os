@@ -34,6 +34,8 @@ class TicTacToe : ComponentActivity() {
 
     private lateinit var tv: TextView
 
+    private lateinit var buttonCls: Button
+
     private lateinit var clientSocket: Socket
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
@@ -44,10 +46,10 @@ class TicTacToe : ComponentActivity() {
 
     private lateinit var enemyEmail: String
 
-    private var remainingTime = 3 // оставшееся время в секундах
+    private var remainingTime = 10 // оставшееся время в секундах
     private lateinit var timerTextView: TextView
 
-    private val timer = object : CountDownTimer(3000, 1000) { // 30 секунд, с интервалом 1 секунда
+    private val timer = object : CountDownTimer(10000, 1000) { // 30 секунд, с интервалом 1 секунда
         override fun onTick(millisUntilFinished: Long) {
             // Обновление отображения оставшегося времени
             remainingTime = (millisUntilFinished / 1000).toInt()
@@ -63,6 +65,8 @@ class TicTacToe : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ttt)
+
+        buttonCls = findViewById(R.id.buttonCls)
 
         timerTextView = findViewById(R.id.timerTextView)
 
@@ -121,6 +125,9 @@ class TicTacToe : ComponentActivity() {
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTextView)
 
+                        buttonCls.setOnClickListener {
+                            exitToMenu();
+                        }
 
                         if (player_id != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока

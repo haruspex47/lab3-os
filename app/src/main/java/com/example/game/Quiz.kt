@@ -13,6 +13,11 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -41,6 +46,7 @@ class Quiz : AppCompatActivity() {
     private lateinit var enemyEmail: String
     private var gameOver: Boolean = false
 
+    private lateinit var buttonCls: Button
     private lateinit var tv: TextView
 
     private lateinit var clientSocket: Socket
@@ -58,6 +64,8 @@ class Quiz : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.d("Debug", "Вошли в класс Quiz!")
         setContentView(R.layout.activity_quiz)
+
+        buttonCls = findViewById(R.id.buttonCls)
 
         var castle1But = findViewById<Button>(R.id.castle1)
         var _castle1But = CustomButton(castle1But, Pair<Int, Int>(0, 1))
@@ -134,6 +142,9 @@ class Quiz : AppCompatActivity() {
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
                         // TODO: конец ожидания сервера (фронтенд) @a1sarpi
+                        buttonCls.setOnClickListener {
+                            exitToMenu();
+                        }
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTV)
 
@@ -533,8 +544,10 @@ class Quiz : AppCompatActivity() {
         getButton(id).status = 1
 
         if (getButton(id) == enemyCastle) {
+            Log.d("Debug", "кто-то выиграл игру!")
             // Toast.makeText(this@GameNull, "Игра окончена. Игрок ${currentPlayer} победил!", Toast.LENGTH_SHORT).show()
             gameOver = true
+            incrementStats()
             showDialog()
         } else {
             enableButtons(getButton(id).getNeighbors())
@@ -550,6 +563,41 @@ class Quiz : AppCompatActivity() {
                 // Через сервер ждём ответ другого игрока
                 waitForOtherPlayer()
             }
+        }
+    }
+
+    private fun incrementStats() {
+        // Получаем ссылку на базу данных Firebase
+        val database = FirebaseDatabase.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        Log.d("Firebase", "Статистика увеличена (можно считать)-1")
+
+
+        // Проверяем, что пользователь авторизован
+        if (userId != null) {
+            Log.d("Firebase", "Статистика увеличена (можно считать)-2")
+            // Получаем ссылку на узел "gameStats" для данного пользователя
+            val gameStatsRef = database.reference.child("users").child(userId).child("gameStats")
+
+            // Увеличиваем значение параметра "game1Score" на единицу
+            gameStatsRef.child("game3Score").addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val currentScore = dataSnapshot.getValue(Int::class.java) ?: 0
+                    val newScore = currentScore + 1
+                    gameStatsRef.child("game3Score").setValue(newScore)
+                        .addOnSuccessListener {
+                            // Успешно обновлено значение параметра "game1Score"
+                        }
+                        .addOnFailureListener { error ->
+                            // Ошибка при обновлении значения параметра "game1Score"
+                        }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Обработка ошибок при чтении данных
+                }
+            })
         }
     }
 

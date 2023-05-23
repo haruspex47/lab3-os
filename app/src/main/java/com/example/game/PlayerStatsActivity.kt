@@ -17,41 +17,42 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-// com.example.game.PlayerStatsActivity.kt
-val playerStatsMap: HashMap<String, GameStats> = HashMap()
-
 class PlayerStatsActivity : AppCompatActivity() {
 
     private lateinit var emailTextView: TextView
     private lateinit var playerStatsTextView: TextView
-    private lateinit var playerStatsTableLayout: TableLayout
+    private lateinit var playerStatsTableLayout: TextView
+    private lateinit var topPlayerStatsTableLayout: TextView
     private lateinit var bestPlayerTextView: TextView
 
     private lateinit var bestPlayerEmail: String
-    private var bestPlayerScore: Int = 0
+    private var bestPlayerScore: Int = -111
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player_stats)
 
+        Log.d("Debug", "Вошли в класс статистики")
+
         // Находим RecyclerView по его идентификатору в макете
-        val playerStatsRecyclerView: RecyclerView = findViewById(R.id.playerStatsRecyclerView)
+        //val playerStatsRecyclerView: RecyclerView = findViewById(R.id.playerStatsRecyclerView)
 
 // Устанавливаем менеджер компоновки (layout manager) для RecyclerView
-        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
-        playerStatsRecyclerView.layoutManager = layoutManager
+//        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
+//        playerStatsRecyclerView.layoutManager = layoutManager
 
 // Создаем список для хранения данных статистики игроков
         val playerStatsList: MutableList<PlayerStats> = mutableListOf()
 
 // Создаем адаптер для RecyclerView и устанавливаем его
-        val adapter: PlayerStatsAdapter = PlayerStatsAdapter(playerStatsList)
-        playerStatsRecyclerView.adapter = adapter
+//        val adapter: PlayerStatsAdapter = PlayerStatsAdapter(playerStatsList)
+//        playerStatsRecyclerView.adapter = adapter
 
         // Находим TextView по их идентификаторам в макете
         emailTextView = findViewById(R.id.emailTextView)
         //playerStatsTextView = findViewById(R.id.playerStatsTextView)
-        playerStatsTableLayout = findViewById<TableLayout>(R.id.playerStatsTableLayout)
+        playerStatsTableLayout = findViewById(R.id.playerStatsTableLayout)
+        topPlayerStatsTableLayout = findViewById(R.id.topPlayerStatsTableLayout)
         bestPlayerTextView = findViewById(R.id.bestPlayerTextView)
 
         // Получаем данные текущего игрока
@@ -83,6 +84,8 @@ class PlayerStatsActivity : AppCompatActivity() {
         val database = FirebaseDatabase.getInstance().reference
         val currentPlayerStatsRef = database.child("users").child(currentPlayerId!!).child("gameStats")
 
+        Log.d("Debug", "Получили ссылку на базу данных")
+
         currentPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val currentPlayerStats = dataSnapshot.getValue(GameStats::class.java)
@@ -109,7 +112,7 @@ class PlayerStatsActivity : AppCompatActivity() {
                 currentPlayerRow.addView(game3Cell)
 
                 // Добавляем строку в таблицу
-                playerStatsTableLayout.addView(currentPlayerRow)
+                playerStatsTableLayout.text = game1Cell.text as String + game2Cell.text + game3Cell.text
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -117,34 +120,33 @@ class PlayerStatsActivity : AppCompatActivity() {
             }
         })
 
-        val allPlayerStatsRef = database.child("users")
-
-        allPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (playerSnapshot in dataSnapshot.children) {
-                    val playerId = playerSnapshot.key
-                    val playerEmail = playerSnapshot.child("email").getValue(String::class.java)
-                    val playerStats = playerSnapshot.child("gameStats").getValue(GameStats::class.java)
-
-                    if (playerId != null && playerEmail != null && playerStats != null) {
-                        val playerStatsData = PlayerStats(playerEmail, playerStats.game1Score, playerStats.game2Score, playerStats.game3Score)
-                        playerStatsList.add(playerStatsData)
-                    }
-                }
-
-                // Уведомляем адаптер об изменении данных
-                adapter.notifyDataSetChanged()
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Обработка ошибок при получении данных из базы данных
-            }
-        })
-
-
-
+//        val allPlayerStatsRef = database.child("users")
+//
+//        allPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                for (playerSnapshot in dataSnapshot.children) {
+//                    val playerId = playerSnapshot.key
+//                    val playerEmail = playerSnapshot.child("email").getValue(String::class.java)
+//                    val playerStats = playerSnapshot.child("gameStats").getValue(GameStats::class.java)
+//
+//                    if (playerId != null && playerEmail != null && playerStats != null) {
+//                        val playerStatsData = PlayerStats(playerEmail, playerStats.game1Score, playerStats.game2Score, playerStats.game3Score)
+//                        playerStatsList.add(playerStatsData)
+//                    }
+//                }
+//
+//                // Уведомляем адаптер об изменении данных
+//                adapter.notifyDataSetChanged()
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                // Обработка ошибок при получении данных из базы данных
+//            }
+//        })
+//
+//
         // Получаем данные самого успешного игрока из базы данных
-        val bestPlayerStatsRef = database.child("users").orderByChild("gameStats/game1score").limitToLast(1)
+        val bestPlayerStatsRef = database.child("users").orderByChild("gameStats/game1Score").limitToLast(1)
 
         bestPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -153,47 +155,57 @@ class PlayerStatsActivity : AppCompatActivity() {
                     val email = playerSnapshot.child("email").getValue(String::class.java)
                     val bestPlayerStats = playerSnapshot.child("gameStats").getValue(GameStats::class.java)
                     val game1Score = bestPlayerStats?.game1Score ?: 0
+                    Log.d("Debug", game1Score.toString())
 
                     // Проверяем, является ли текущий игрок лучшим
                     if (game1Score > bestPlayerScore) {
                         bestPlayerEmail = email ?: ""
                         bestPlayerScore = game1Score
+                        Log.d("Debug", "$bestPlayerEmail")
                     }
                 }
+                //Log.d("Debug", bestPlayerEmail + " " + bestPlayerScore.toInt())
+                topPlayerStatsTableLayout.text = "$bestPlayerEmail ${bestPlayerScore.toString()}"
 
                 // Отображаем данные самого успешного игрока
-                bestPlayerTextView.text = "Лучший результат: $bestPlayerEmail, $bestPlayerScore побед"
+                //bestPlayerTextView.text = "Лучший результат: $bestPlayerEmail, $bestPlayerScore побед"
 
 
 //                // Обработка полученных данных самого успешного игрока
-//                for (playerSnapshot in dataSnapshot.children) {
-//                    val bestPlayerEmail = playerSnapshot.child("email").getValue(String::class.java)
-//                    val bestPlayerStats = playerSnapshot.child("gameStats").getValue(GameStats::class.java)
-//                    val bestPlayerGame1Score = bestPlayerStats?.game1Score ?: 0
-//                    val bestPlayerGame2Score = bestPlayerStats?.game2Score ?: 0
-//                    val bestPlayerGame3Score = bestPlayerStats?.game3Score ?: 0
-//
-//                    // Создаем новую строку для лучшего игрока
-//                    val bestPlayerRow = TableRow(this@PlayerStatsActivity)
-//
-//                    // Создаем ячейку для отображения лучшего результата игры 1
-//                    val bestGame1Cell = TextView(this@PlayerStatsActivity)
-//                    bestGame1Cell.text = "Лучший результат игры 1: $bestPlayerGame1Score (игрок: $bestPlayerEmail)"
-//                    bestPlayerRow.addView(bestGame1Cell)
-//
-//                    // Создаем ячейку для отображения лучшего результата игры 2
-//                    val bestGame2Cell = TextView(this@PlayerStatsActivity)
-//                    bestGame2Cell.text = "Лучший результат игры 2: $bestPlayerGame2Score (игрок: $bestPlayerEmail)"
-//                    bestPlayerRow.addView(bestGame2Cell)
-//
-//                    // Создаем ячейку для отображения лучшего результата игры 3
-//                    val bestGame3Cell = TextView(this@PlayerStatsActivity)
-//                    bestGame3Cell.text = "Лучший результат игры 3: $bestPlayerGame3Score (игрок: $bestPlayerEmail)"
-//                    bestPlayerRow.addView(bestGame3Cell)
-//
-//                    // Добавляем строку в таблицу
-//                    playerStatsTableLayout.addView(bestPlayerRow)
+                for (playerSnapshot in dataSnapshot.children) {
+                    val bestPlayerEmail = playerSnapshot.child("email").getValue(String::class.java)
+                    Log.d("Firebase", "best email: $bestPlayerEmail")
+                    val bestPlayerStats =
+                        playerSnapshot.child("gameStats").getValue(GameStats::class.java)
+                    val bestPlayerGame1Score = bestPlayerStats?.game1Score ?: 0
+                    val bestPlayerGame2Score = bestPlayerStats?.game2Score ?: 0
+                    val bestPlayerGame3Score = bestPlayerStats?.game3Score ?: 0
+
+                    // Создаем новую строку для лучшего игрока
+                    val bestPlayerRow = TableRow(this@PlayerStatsActivity)
+
+                    // Создаем ячейку для отображения лучшего результата игры 1
+                    val bestGame1Cell = TextView(this@PlayerStatsActivity)
+                    bestGame1Cell.text =
+                        "Лучший результат игры 1: $bestPlayerGame1Score (игрок: $bestPlayerEmail)"
+                    bestPlayerRow.addView(bestGame1Cell)
+
+                    // Создаем ячейку для отображения лучшего результата игры 2
+                    val bestGame2Cell = TextView(this@PlayerStatsActivity)
+                    bestGame2Cell.text =
+                        "Лучший результат игры 2: $bestPlayerGame2Score (игрок: $bestPlayerEmail)"
+                    bestPlayerRow.addView(bestGame2Cell)
+
+                    // Создаем ячейку для отображения лучшего результата игры 3
+                    val bestGame3Cell = TextView(this@PlayerStatsActivity)
+                    bestGame3Cell.text =
+                        "Лучший результат игры 3: $bestPlayerGame3Score (игрок: $bestPlayerEmail)"
+                    bestPlayerRow.addView(bestGame3Cell)
+
+                    // Добавляем строку в таблицу
+                    topPlayerStatsTableLayout.text = bestGame1Cell.text as String + bestGame2Cell.text + bestGame3Cell.text
                 }
+            }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Обработка ошибок при получении данных из базы данных
@@ -210,39 +222,39 @@ data class GameStats(
 
 
 
-class PlayerStatsAdapter(private val playerStatsList: List<PlayerStats>) :
-    RecyclerView.Adapter<PlayerStatsAdapter.ViewHolder>() {
-
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Определение TextView для отображения идентификатора игрока
-        val playerIdTextView: TextView = itemView.findViewById(R.id.playerIdTextView)
-        // Определение TextView для отображения статистики игроков
-        val game1TextView: TextView = itemView.findViewById(R.id.game1TextView)
-        val game2TextView: TextView = itemView.findViewById(R.id.game2TextView)
-        val game3TextView: TextView = itemView.findViewById(R.id.game3TextView)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_player_stats, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val playerStats = playerStatsList[position]
-
-        // Отображаем статистику игрока в соответствующих TextView
-        holder.playerIdTextView.text = "Игрок ${playerStats.playerId}"
-        holder.game1TextView.text = "Игра 1: ${playerStats.game1score}"
-        holder.game2TextView.text = "Игра 2: ${playerStats.game2score}"
-        holder.game3TextView.text = "Игра 3: ${playerStats.game3score}"
-    }
-
-
-    override fun getItemCount(): Int {
-        return playerStatsList.size
-    }
-}
+//class PlayerStatsAdapter(private val playerStatsList: List<PlayerStats>) :
+//    RecyclerView.Adapter<PlayerStatsAdapter.ViewHolder>() {
+//
+//    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//        // Определение TextView для отображения идентификатора игрока
+//        val playerIdTextView: TextView = itemView.findViewById(R.id.playerIdTextView)
+//        // Определение TextView для отображения статистики игроков
+//        val game1TextView: TextView = itemView.findViewById(R.id.game1TextView)
+//        val game2TextView: TextView = itemView.findViewById(R.id.game2TextView)
+//        val game3TextView: TextView = itemView.findViewById(R.id.game3TextView)
+//    }
+//
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+//        val view = LayoutInflater.from(parent.context)
+//            .inflate(R.layout.item_player_stats, parent, false)
+//        return ViewHolder(view)
+//    }
+//
+//    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+//        val playerStats = playerStatsList[position]
+//
+//        // Отображаем статистику игрока в соответствующих TextView
+//        holder.playerIdTextView.text = "Игрок ${playerStats.playerId}"
+//        holder.game1TextView.text = "Игра 1: ${playerStats.game1score}"
+//        holder.game2TextView.text = "Игра 2: ${playerStats.game2score}"
+//        holder.game3TextView.text = "Игра 3: ${playerStats.game3score}"
+//    }
+//
+//
+//    override fun getItemCount(): Int {
+//        return playerStatsList.size
+//    }
+//}
 
 data class PlayerStats(
     val playerId: String,

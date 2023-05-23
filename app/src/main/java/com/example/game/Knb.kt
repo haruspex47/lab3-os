@@ -26,6 +26,7 @@ import java.net.Socket
 class Knb : ComponentActivity() {
     val GAME_ID = "2"
     private lateinit var buttons: Array<Button>
+    private lateinit var buttonCls: Button
     private var currentPlayer: Int = 1
     private var gameOver: Boolean = false
 
@@ -46,6 +47,8 @@ class Knb : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_knb)
+
+        buttonCls = findViewById(R.id.buttonCls)
 
         Log.d("Debug", "Вошли в игру камень-ножницы-бумага с почтой ${playerEmail}")
 
@@ -89,6 +92,9 @@ class Knb : ComponentActivity() {
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
                         // TODO: конец ожидания сервера (фронтенд) @a1sarpi
+                        buttonCls.setOnClickListener {
+                            exitToMenu();
+                        }
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTextView)
                         enableAllButtons()
@@ -135,8 +141,13 @@ class Knb : ComponentActivity() {
                     writer.println("win")
                     writer.flush()
                     // TODO: сообщение о победе/ничье (выше) gui @a1sarpi
-                    if (round == 0)
+                    if (round == 0) {
                         gameOver = true
+                        var ans = reader.readLine()
+                        if (ans == "win") {
+                            incrementStats()
+                        }
+                    }
                 } else if (checkWin(id, ans) == 0) {
                     writer.println("dontwin")
                     writer.flush()

@@ -81,11 +81,12 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
             onClick(it);
         })
 //        val username = email
-//        val playerStatsButton: Button = findViewById(R.id.playerStatsButton)
-//        playerStatsButton.setOnClickListener {
-//            val intent = Intent(this, PlayerStatsActivity::class.java)
-//            startActivity(intent)
-//        }
+        val playerStatsButton: Button = findViewById(R.id.playerStatsButton)
+        playerStatsButton.setOnClickListener {
+            val intent = Intent(this, PlayerStatsActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 //
 //        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
 //            if (task.isSuccessful) {
@@ -131,39 +132,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         val debugButton: Button = findViewById(R.id.debugButton)
         debugButton.setOnClickListener {
             // Получаем ссылку на базу данных Firebase
-            val database = FirebaseDatabase.getInstance()
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val email = database.reference.child("users").child(userId!!).child("email")
-            email.setValue(FirebaseAuth.getInstance().currentUser?.email)
-            database.reference.child("users").child(userId!!).child("password")
-
-
-            // Проверяем, что пользователь авторизован
-            if (userId != null) {
-                Log.d("Firebase", "Статистика увеличена (можно считать)-2")
-                // Получаем ссылку на узел "gameStats" для данного пользователя
-                val gameStatsRef = database.reference.child("users").child(userId).child("gameStats")
-
-                // Увеличиваем значение параметра "game1Score" на единицу
-                gameStatsRef.child("game1Score").addListenerForSingleValueEvent(object :
-                    ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val currentScore = dataSnapshot.getValue(Int::class.java) ?: 0
-                        val newScore = currentScore + 1
-                        gameStatsRef.child("game1Score").setValue(newScore)
-                            .addOnSuccessListener {
-                                Log.d("Debug", "Успешно обновлено значение параметра game1Score")
-                            }
-                            .addOnFailureListener { error ->
-                                Log.d("Debug", "Ошибка при обновлении значения параметра game1Score")
-                            }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        // Обработка ошибок при чтении данных
-                    }
-                })
-            }
+//            createDB()
         }
 
 //        // Запись статистики игры пользователя
@@ -219,6 +188,8 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 //            }
     }
 
+
+
     override fun onClick(v: View?) {
         FirebaseAuth.getInstance().signOut();
         val intent = Intent(applicationContext, Login::class.java);
@@ -254,6 +225,41 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(intent)
         finish()
     }
+}
+
+fun createDB() {
+    val database = FirebaseDatabase.getInstance()
+    val userId = FirebaseAuth.getInstance().currentUser?.uid
+    Log.d("Firebase", "${userId}")
+    val email = database.reference.child("users").child(userId!!).child("email")
+    email.setValue(FirebaseAuth.getInstance().currentUser?.email)
+
+//    // Проверяем, что пользователь авторизован
+//    if (userId != null) {
+//        Log.d("Firebase", "Статистика увеличена (можно считать)-2")
+//        // Получаем ссылку на узел "gameStats" для данного пользователя
+//        val gameStatsRef = database.reference.child("users").child(userId).child("gameStats")
+//
+//        // Увеличиваем значение параметра "game1Score" на единицу
+//        gameStatsRef.child("game1Score").addListenerForSingleValueEvent(object :
+//            ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                val currentScore = dataSnapshot.getValue(Int::class.java) ?: 0
+//                val newScore = currentScore + 1
+//                gameStatsRef.child("game1Score").setValue(newScore)
+//                    .addOnSuccessListener {
+//                        Log.d("Debug", "Успешно обновлено значение параметра game1Score")
+//                    }
+//                    .addOnFailureListener { error ->
+//                        Log.d("Debug", "Ошибка при обновлении значения параметра game1Score")
+//                    }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Обработка ошибок при чтении данных
+//            }
+//        })
+//    }
 }
 
 
