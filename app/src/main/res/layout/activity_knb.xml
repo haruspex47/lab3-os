@@ -1,72 +1,84 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+
+
+    <LinearLayout
+        android:id="@+id/innerTextButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center"
+        android:layout_gravity="top">
+
+        <LinearLayout
+            android:id="@+id/onemoreinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/currentPlayerTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ожидается подключение \nвторого игрока..."
+                android:fontFamily="@font/zerocool"
+                android:textColor="#FF6392"
+                android:textSize="15sp"
+                android:layout_gravity="left"
+                android:breakStrategy="simple"/>
+
+            <TextView
+                android:id="@+id/welcomeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/zerocool"
+                android:textColor="#FF6392"
+                android:textSize="15sp"
+                android:text="Добро пожаловать!"
+                android:layout_gravity="left"
+                android:breakStrategy="simple"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonCls"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:backgroundTint="#FFE45E"
+            android:fontFamily="@font/zerocool"
+            android:text="@string/logout"
+            android:textSize="20sp"
+            android:layout_gravity="right"
+            android:layout_marginLeft="40dp"/>
+
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/currentPlayerTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:fontFamily="@font/zerocool"
-        android:text="Ожидается подключение второго игрока..."
-        android:textColor="#FF6392"
+        android:id="@+id/winner"
+        android:text="ПОБЕДИТЕЛЬ"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.003"
-        tools:ignore="MissingConstraints"></TextView>
+        android:fontFamily="@font/zerocool"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/welcomeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/zerocool"
-        android:text="Добро пожаловать!"
-        android:textColor="#FF6392"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/currentPlayerTextView" />
+    <ImageView
+        android:id="@+id/winImage"
+        android:layout_width="400sp"
+        android:layout_height="400sp"/>
 
     <include
         layout="@layout/buttons_knb"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginBottom="70dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcomeTextView"
-        app:layout_constraintVertical_bias="0.244" />
-
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="76dp"
-        android:cropToPadding="true"
-        android:scaleX="1"
-        android:scaleY="1"
-        android:src="@drawable/cross"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonCls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#FFE45E"
-        android:fontFamily="@font/zerocool"
-        android:text="@string/logout"
-        android:textSize="20dp"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="273dp"
-        tools:layout_editor_absoluteY="29dp" />
+        android:layout_gravity="bottom"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

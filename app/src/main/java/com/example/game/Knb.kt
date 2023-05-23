@@ -1,10 +1,14 @@
 package com.example.game
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
@@ -27,8 +31,11 @@ class Knb : ComponentActivity() {
     val GAME_ID = "2"
     private lateinit var buttons: Array<Button>
     private lateinit var buttonCls: Button
+    private lateinit var winnerTextView: TextView
     private var currentPlayer: Int = 1
     private var gameOver: Boolean = false
+
+    private lateinit var imageWin: ImageView
 
     private lateinit var tv: TextView
 
@@ -49,6 +56,8 @@ class Knb : ComponentActivity() {
         setContentView(R.layout.activity_knb)
 
         buttonCls = findViewById(R.id.buttonCls)
+        imageWin = findViewById(R.id.winImage)
+        winnerTextView = findViewById(R.id.winner)
 
         Log.d("Debug", "Вошли в игру камень-ножницы-бумага с почтой ${playerEmail}")
 
@@ -137,6 +146,9 @@ class Knb : ComponentActivity() {
                 var ans = _ans.toInt()
 
                 if (checkWin(id, ans) == 1) {
+                    val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/win")!!
+                    imageWin.setImageDrawable(w)
+                    winnerTextView.setText("{$playerEmail} выиграл")
                     round--
                     writer.println("win")
                     writer.flush()
@@ -149,9 +161,15 @@ class Knb : ComponentActivity() {
                         }
                     }
                 } else if (checkWin(id, ans) == 0) {
+                    val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/draw")!!
+                    imageWin.setImageDrawable(w)
+                    winnerTextView.setText("Ничья")
                     writer.println("dontwin")
                     writer.flush()
                 } else if (checkWin(id, ans) == -1) {
+                    val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/cross")!!
+                    imageWin.setImageDrawable(w)
+                    winnerTextView.setText("{$enemyEmail} выиграл")
                     round--
                     if (round == 0)
                         gameOver = true

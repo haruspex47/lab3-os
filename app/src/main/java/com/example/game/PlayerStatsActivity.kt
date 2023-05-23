@@ -1,5 +1,6 @@
 package com.example.game
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import com.google.firebase.database.ValueEventListener
 class PlayerStatsActivity : AppCompatActivity() {
 
     private lateinit var emailTextView: TextView
+    private lateinit var bestPlayerEmailTextView: TextView
     private lateinit var playerStatsTextView: TextView
     private lateinit var playerStatsTableLayout: TextView
     private lateinit var topPlayerStatsTableLayout: TextView
@@ -58,10 +60,11 @@ class PlayerStatsActivity : AppCompatActivity() {
         // Получаем данные текущего игрока
         val currentUser = FirebaseAuth.getInstance().currentUser
         val currentPlayerId = currentUser?.uid
-        val currentEmail = currentUser?.email
+        val currentEmail = currentUser?.email?.removeSuffix("@whatever.ru")
 
         // Отображаем email текущего игрока
         emailTextView.text = currentEmail
+
 
 //        val usersRef = FirebaseDatabase.getInstance().reference
 //        val currentUserRef = usersRef.child(userId!!)
@@ -87,6 +90,7 @@ class PlayerStatsActivity : AppCompatActivity() {
         Log.d("Debug", "Получили ссылку на базу данных")
 
         currentPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val currentPlayerStats = dataSnapshot.getValue(GameStats::class.java)
 
@@ -112,7 +116,7 @@ class PlayerStatsActivity : AppCompatActivity() {
                 currentPlayerRow.addView(game3Cell)
 
                 // Добавляем строку в таблицу
-                playerStatsTableLayout.text = game1Cell.text as String + game2Cell.text + game3Cell.text
+                playerStatsTableLayout.text = game1Cell.text as String + "\n" + game2Cell.text + "\n" + game3Cell.text
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -149,6 +153,7 @@ class PlayerStatsActivity : AppCompatActivity() {
         val bestPlayerStatsRef = database.child("users").orderByChild("gameStats/game1Score").limitToLast(1)
 
         bestPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Обработка полученных данных самого успешного игрока
                 for (playerSnapshot in dataSnapshot.children) {
@@ -203,8 +208,9 @@ class PlayerStatsActivity : AppCompatActivity() {
                     bestPlayerRow.addView(bestGame3Cell)
 
                     // Добавляем строку в таблицу
-                    topPlayerStatsTableLayout.text = bestGame1Cell.text as String + bestGame2Cell.text + bestGame3Cell.text
+                    topPlayerStatsTableLayout.text = bestGame1Cell.text as String + "\n" + bestGame2Cell.text + "\n" + bestGame3Cell.text
                 }
+                bestPlayerTextView.text = bestPlayerEmail.removeSuffix("@whatever.ru")
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

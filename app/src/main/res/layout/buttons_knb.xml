@@ -1,47 +1,70 @@
-<GridLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:columnCount="3"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
     android:orientation="horizontal">
+
+<!--    <Button-->
+<!--        android:id="@+id/button1"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:text="rock"-->
+<!--        android:fontFamily="@font/zerocool"-->
+<!--        android:textSize="20sp"-->
+<!--        android:background="@drawable/rock"-->
+<!--        android:layout_columnWeight="0"-->
+<!--        >-->
+<!--    </Button>-->
+
+<!--    <Button-->
+<!--        android:id="@+id/button2"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:text="scis\nsors"-->
+<!--        android:fontFamily="@font/zerocool"-->
+<!--        android:textSize="20sp"-->
+<!--        android:background="@drawable/scissors"-->
+<!--        android:layout_columnWeight="1"-->
+<!--        />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/button3"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:text="paper"-->
+<!--        android:fontFamily="@font/zerocool"-->
+<!--        android:textSize="20sp"-->
+<!--        android:background="@drawable/paper"-->
+<!--        android:layout_columnWeight="1"-->
+<!--        android:layout_rowWeight="2"/>-->
 
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-"
         android:fontFamily="@font/zerocool"
-        android:textSize="36sp"
-        android:background="@drawable/button_selector"
-        android:padding="16dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1">
+        android:textSize="20dp"
+        app:icon="@drawable/rock">
+
     </Button>
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-"
         android:fontFamily="@font/zerocool"
-        android:textSize="36sp"
-        android:background="@drawable/button_selector"
-        android:padding="16dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"/>
+        app:icon="@drawable/scissors"
+        android:layout_columnWeight="1">
+    </Button>
 
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-"
+        app:icon="@drawable/paper"
         android:fontFamily="@font/zerocool"
-        android:textSize="36sp"
-        android:background="@drawable/button_selector"
-        android:padding="16dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"/>
+        android:src="@drawable/paper">
+    </Button>
 
-
-</GridLayout>
+</LinearLayout>

@@ -5,45 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="center">
 
     <TextView
         android:id="@+id/emailTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:fontFamily="@font/zerocool"
+        android:textSize="25sp"
+        android:textColor="@color/argblue"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="30dp" />
 
     <TextView
         android:id="@+id/playerStatsTableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/zerocool"
-        android:textSize="15dp"
-        android:textColor="@color/argblue">
-    </TextView>
+        android:textSize="15sp"
+        android:textColor="@color/argblue"
+        android:breakStrategy="simple"
+        android:hyphenationFrequency="full"
+        android:layout_marginBottom="60dp" />
 
-    <!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--    <androidx.recyclerview.widget.RecyclerView   -->
 <!--        android:id="@+id/playerStatsRecyclerView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:padding="16dp" />-->
+<!--        android:layout_width="match_parent"      -->
+<!--        android:layout_height="match_parent"     -->
+<!--        android:padding="16dp" />                -->
 
+    <TextView
+        android:id="@+id/bestPlayerTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/zerocool"
+        android:textColor="@color/cyclamen"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
 
     <TextView
         android:id="@+id/topPlayerStatsTableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/zerocool"
-        android:textColor="@color/argblue"
-        android:textSize="15dp"></TextView>
-
-    <TextView
-        android:layout_marginTop="30dp"
-        android:id="@+id/bestPlayerTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16dp" />
+        android:textColor="@color/cyclamen"
+        android:textSize="15sp"
+        android:breakStrategy="simple"
+        android:hyphenationFrequency="full" />
 
 </LinearLayout>
