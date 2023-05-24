@@ -1,6 +1,8 @@
 package com.example.game
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -62,6 +64,7 @@ class TicTacToe : ComponentActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ttt)
@@ -150,6 +153,7 @@ class TicTacToe : ComponentActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun waitForOtherPlayer() {
         startTurn()
         GlobalScope.launch(Dispatchers.IO) {
@@ -184,6 +188,13 @@ class TicTacToe : ComponentActivity() {
                 // UI в основном потоке
                 launch(Dispatchers.Main) {
                     buttons[number.first*3 + number.second].text = if (player_id == 1) "0" else "1"
+                    val w: Drawable = if (player_id == 1) {
+                        Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/circle_red")!!
+
+                    } else {
+                        Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/circle_red")!!
+                    }
+                    buttons[number.first*3 + number.second].background = w
                     enableAllButtons()
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
@@ -226,6 +237,8 @@ class TicTacToe : ComponentActivity() {
         Log.d("Debug", "id: $id, id/3 = ${id / 3}")
         var number = Pair<Int, Int>(id / 3, id % 3)
         myButtonsId.add(number)
+
+
 
         // посылаем серверу число
         GlobalScope.launch(Dispatchers.IO) {
@@ -399,6 +412,7 @@ class TicTacToe : ComponentActivity() {
         alert.show()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun resetGame() {
         for (bt in buttons)
             bt.text = "-"
