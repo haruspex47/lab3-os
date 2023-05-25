@@ -1,5 +1,6 @@
 package com.example.game
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -35,6 +36,7 @@ class Knb : ComponentActivity() {
     private lateinit var winnerTextView: TextView
     private var currentPlayer: Int = 1
     private var gameOver: Boolean = false
+    private var whoWon: Int = -10
 
     private lateinit var imageWin: ImageView
 
@@ -135,6 +137,7 @@ class Knb : ComponentActivity() {
         }
     }
 
+    @SuppressLint("ResourceType", "UseCompatLoadingForDrawables")
     private fun onButtonClicked(view: View?, id: Int) {
         // TODO: gui @a1sarpi
         var number = id
@@ -151,9 +154,7 @@ class Knb : ComponentActivity() {
 
                 if (checkWin(id, ans) == 1) {
                     Log.d("Debug", "В данной битве пользователь выиграл")
-                    val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/win")!!
-                    imageWin.setImageDrawable(w)
-                    winnerTextView.setText("{$playerEmail} выиграл")
+                    whoWon = 1
                     round--
                     writer.println("win")
                     writer.flush()
@@ -167,16 +168,12 @@ class Knb : ComponentActivity() {
                     }
                 } else if (checkWin(id, ans) == 0) {
                     Log.d("Debug", "В данной битве ничья")
-                    val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/draw")!!
-                    imageWin.setImageDrawable(w)
-                    winnerTextView.setText("Ничья")
+                    whoWon = 0
                     writer.println("dontwin")
                     writer.flush()
                 } else if (checkWin(id, ans) == -1) {
                     Log.d("Debug", "В данной битве пользователь проиграл")
-                    val w: Drawable = Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/cross")!!
-                    imageWin.setImageDrawable(w)
-                    winnerTextView.setText("{$enemyEmail} выиграл")
+                    whoWon = -1
                     round--
                     if (round == 0)
                         gameOver = true
@@ -186,6 +183,20 @@ class Knb : ComponentActivity() {
                 // UI в основном потоке
                 launch(Dispatchers.Main) {
                     if (gameOver) {
+                        lateinit var w: Drawable
+                        if (whoWon == 1) {
+                            w = resources.getDrawable(R.drawable.win)
+                            winnerTextView.setText("{$playerEmail} выиграл")
+                        }
+                        else if (whoWon == 0) {
+                            w = resources.getDrawable(R.drawable.draw)
+                            winnerTextView.setText("Ничья")
+                        }
+                        else if (whoWon == -1) {
+                            w = resources.getDrawable(R.drawable.cross_red)
+                            winnerTextView.setText("{$enemyEmail} выиграл")
+                        }
+                        imageWin.setImageDrawable(w)
                         Log.d("Debug", "Игра окончена")
                         disableAllButtons()
                         incrementStats()

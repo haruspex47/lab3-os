@@ -40,7 +40,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -94,7 +94,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -147,7 +147,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -200,7 +200,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -253,7 +253,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -306,7 +306,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -359,7 +359,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -412,7 +412,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
@@ -465,7 +465,7 @@
                 android:text="-"
                 android:fontFamily="@font/zerocool"
                 android:textSize="36sp"
-                android:background="@android:color/transparent"
+                android:background="@drawable/button_transparent"
                 android:padding="16dp"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"/>
