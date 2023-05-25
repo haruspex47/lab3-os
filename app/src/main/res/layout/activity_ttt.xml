@@ -25,7 +25,7 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/currentPlayerTV"
+                android:id="@+id/currentPlayerTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ожидается подключение \nвторого игрока..."
@@ -99,8 +99,8 @@
         <include
             layout="@layout/buttons_ttt"
             android:id="@+id/buttonsLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
             android:layout_marginBottom="60dp"
             android:layout_gravity="center"
             android:layout_marginTop="60dp" />
