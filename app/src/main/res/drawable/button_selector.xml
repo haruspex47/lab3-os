@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true"
-        android:color="@color/cyclamen"/> <!-- pressed -->
-    <item android:state_focused="true"
-        android:color="@color/lightsky"/> <!-- focused -->
-    <item android:color="@color/argblue"/> <!-- default -->
+    <item android:drawable="@color/argblue" android:state_first="true" />
+    <item android:drawable="@color/lightsky" android:state_first="false" />
+    <item android:drawable="@color/argblue" android:state_selected="true"/>
+    <item android:drawable="@color/lightsky" android:state_selected="false"/>
+    <item android:drawable="@color/argblue" android:state_single="true" />
+    <item android:drawable="@color/lightsky" android:state_single="false" />
+    <item android:drawable="@color/argblue" android:state_active="true"/>
+    <item android:drawable="@color/lightsky" android:state_active="false"/>
 </selector>

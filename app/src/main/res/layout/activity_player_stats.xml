@@ -8,6 +8,18 @@
     android:padding="16dp"
     android:gravity="center">
 
+    <Button
+        android:id="@+id/buttonCls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FFE45E"
+        android:fontFamily="@font/zerocool"
+        android:text="@string/logout"
+        android:textSize="20sp"
+        android:layout_gravity="right"
+        android:layout_marginLeft="40dp"
+        android:layout_marginBottom="40dp"/>
+
     <TextView
         android:id="@+id/emailTextView"
         android:layout_width="match_parent"

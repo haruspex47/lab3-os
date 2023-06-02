@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  app:
+    image: back-master:0.0.1
+    build: .
+    volumes:
+      - ./app1:/app/db
+    ports:
+      - "8001:8000"
+    container_name: game_container
+    command: kotlin server/server.kt rungameserver 0.0.0.0:8000

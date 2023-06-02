@@ -1,17 +1,22 @@
 package com.example.game
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.game.SocketHelper.clientSocket
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,6 +31,7 @@ class PlayerStatsActivity : AppCompatActivity() {
     private lateinit var playerStatsTableLayout: TextView
     private lateinit var topPlayerStatsTableLayout: TextView
     private lateinit var bestPlayerTextView: TextView
+    private lateinit var buttonCls: Button
 
     private lateinit var bestPlayerEmail: String
     private var bestPlayerScore: Int = -111
@@ -36,6 +42,7 @@ class PlayerStatsActivity : AppCompatActivity() {
 
         Log.d("Debug", "Вошли в класс статистики")
 
+        buttonCls = findViewById(R.id.buttonCls)
         // Находим RecyclerView по его идентификатору в макете
         //val playerStatsRecyclerView: RecyclerView = findViewById(R.id.playerStatsRecyclerView)
 
@@ -88,6 +95,10 @@ class PlayerStatsActivity : AppCompatActivity() {
         val currentPlayerStatsRef = database.child("users").child(currentPlayerId!!).child("gameStats")
 
         Log.d("Debug", "Получили ссылку на базу данных")
+
+        buttonCls.setOnClickListener {
+            exitToMenu();
+        }
 
         currentPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
@@ -218,6 +229,13 @@ class PlayerStatsActivity : AppCompatActivity() {
             }
         })
     }
+
+    private fun exitToMenu() {
+        val intent = Intent(this, MenuActivity::class.java)
+        startActivity(intent)
+        finish() // Закрываем меню после запуска игры
+    }
+
 }
 
 data class GameStats(
@@ -261,6 +279,8 @@ data class GameStats(
 //        return playerStatsList.size
 //    }
 //}
+
+
 
 data class PlayerStats(
     val playerId: String,
