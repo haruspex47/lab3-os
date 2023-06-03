@@ -53,8 +53,8 @@ class Quiz : AppCompatActivity() {
     private lateinit var reader: BufferedReader
     private lateinit var writer: PrintWriter
 
-    //private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
-    private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
+    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email?.removeSuffix("@whatever.ru")
+    //private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
     private var currentBattleId: Pair<Int, Int> = Pair<Int, Int>(0,0)
     private lateinit var myCastle: CustomButton
     private lateinit var enemyCastle: CustomButton

@@ -8,7 +8,6 @@ import java.net.ServerSocket
 import java.net.Socket
 
 class Server {
-    private var round: Int = 3
     private var _indexes: Array<Int> = arrayOf()
     private val serverSocket: ServerSocket = ServerSocket(1234)
     private var guessedNumber: Int = 0
@@ -57,6 +56,7 @@ class Server {
 
 
     private inner class Player(val clientSocket: Socket) : Runnable {
+        private var round: Int = 3
         private var wins: Int = 0
 
         private val indexes: MutableList<Int> = mutableListOf(0, 1, 2)
@@ -82,7 +82,7 @@ class Server {
         }
 
         fun sendPlayerId(id: Int, email: String) {
-            writer.println(id.toString())
+            writer.println((id%2).toString())
             writer.println(email)
         }
 
@@ -140,29 +140,44 @@ class Server {
                 var correct = reader.readLine()
                 println("Игрок $id прислал данные $correct")
                 if (correct == "win") {
-                    println("Игрок $id выиграл раунд!")
+                    println("Игрок $id выиграл раунд, теперь раундов будет ${round-1}!")
                     wins++
                     round--
-                    if (round == 0) {
-                        if (wins > 1) {
+                    if ((round <= 0) or (enemy.win == true) or (win == true)) {
+//                        if (wins > 1) {
+//                            println("Игрок $id выиграл игру!")
+//                            writer.println("win")
+//                            writer.flush()
+//                            win = true
+//                            val ans = reader.readLine().toInt()
+//                            onWin(ans)
+//                            break
+//                        } else if (enemy.wins > 1) {
+//                            println("Игрок $id проиграл игру!")
+//                            enemy.win = true
+//                            writer.println("lose")
+//                            writer.flush()
+//                            val ans = reader.readLine().toInt()
+//                            onWin(ans)
+//                            break
+//                        } else {
+//                            println("Ничья!")
+//                            win = true
+//                            enemy.win = true
+//                            val ans = reader.readLine().toInt()
+//                            onWin(ans)
+//                            break
+//                        }
+                        round = 3
+                        var ans = reader.readLine()
+                        if (ans == "win") {
                             println("Игрок $id выиграл игру!")
-                            writer.println("win")
-                            writer.flush()
                             win = true
-                            val ans = reader.readLine().toInt()
-                            onWin(ans)
-                            break
-                        } else if (enemy.wins > 1) {
-                            println("Игрок $id проиграл игру!")
-                            enemy.win = true
-                            writer.println("lose")
-                            writer.flush()
                             val ans = reader.readLine().toInt()
                             onWin(ans)
                             break
                         } else {
-                            println("Ничья!")
-                            win = true
+                            println("Игрок $id проиграл игру!")
                             enemy.win = true
                             val ans = reader.readLine().toInt()
                             onWin(ans)
@@ -170,8 +185,26 @@ class Server {
                         }
                     }
                 }
-                if (correct == "dontwin") {
-                    println("Ничья в раунде!")
+                if (correct == "lose") {
+                    println("Игрок $id проиграл в раунде, теперь раундов будет ${round-1}!")
+                    round--
+                    if ((round <= 0) or (enemy.win == true) or (win == true)) {
+                        round = 3
+                        var ans = reader.readLine()
+                        if (ans == "win") {
+                            println("Игрок $id выиграл игру!")
+                            win = true
+                            val ans = reader.readLine().toInt()
+                            onWin(ans)
+                            break
+                        } else {
+                            println("Игрок $id проиграл игру!")
+                            enemy.win = true
+                            val ans = reader.readLine().toInt()
+                            onWin(ans)
+                            break
+                        }
+                    }
                 }
             }
         }
@@ -183,8 +216,21 @@ class Server {
             while (true) {
                 println("Сервер ждёт данные")
                 val line = reader.readLine()
+                if (line == "-111") {
+                    println("присланы данные о проигрышном истечении времени!")
+                    enemy.win = true
+                    onWin(reader.readLine().toInt())
+                    break
+                }
                 if (enemy.win) {
                     onWin(line.toInt())
+                    break
+                }
+                if (line == "111") {
+                    println("присланы данные о выигрышном истечении времени!")
+                    win = true
+                    val ans = reader.readLine().toInt()
+                    onWin(ans)
                     break
                 }
                 if (line == null) {

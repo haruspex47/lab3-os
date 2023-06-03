@@ -8,6 +8,7 @@ import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
@@ -27,10 +28,10 @@ import java.io.PrintWriter
 import java.net.Socket
 
 class TicTacToe : ComponentActivity() {
-    private var enButtons: MutableList<Button> = mutableListOf()
+    private var enButtons: MutableList<ImageButton> = mutableListOf()
     private var myButtonsId: MutableList<Pair<Int, Int>> = mutableListOf()
     val GAME_ID = "1"
-    private lateinit var buttons: Array<Button>
+    private lateinit var buttons: Array<ImageButton>
     private var currentPlayer: Int = 1
     private var gameOver: Boolean = false
 
@@ -93,6 +94,10 @@ class TicTacToe : ComponentActivity() {
             buttons[i].setOnClickListener {view -> onButtonClicked(view, i) }
         }
 
+        buttonCls.setOnClickListener {
+            exitToMenu();
+        }
+
         enButtons.clear()
         for (bt in buttons) {
             enButtons.add(bt)
@@ -128,10 +133,6 @@ class TicTacToe : ComponentActivity() {
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTextView)
 
-                        buttonCls.setOnClickListener {
-                            exitToMenu();
-                        }
-
                         if (player_id != 0) {    // if (currentPlayer != player.id + 1) {
                             // Через сервер ждём ответ другого игрока
                             tv.text =
@@ -139,7 +140,7 @@ class TicTacToe : ComponentActivity() {
                             waitForOtherPlayer()
                         } else {
                             startTurn()
-                            tv.text = "Сейчас ход игрока ${playerEmail}"
+                            tv.text = "Сейчас ход игрока ${playerEmail?.removeSuffix("@whatever.ru")}"
                             enableAllButtons()
                         }
                     }
@@ -155,12 +156,14 @@ class TicTacToe : ComponentActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun waitForOtherPlayer() {
+        var tm = false
         startTurn()
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val response = reader.readLine()
                 if (response.toInt() == -111) {
                     Log.d("Error", "Игрок отключился")
+                    tm = true
                     exitToMenu()
                     // TODO: сообщение о сожалении @a1sarpi
                 }
@@ -172,27 +175,23 @@ class TicTacToe : ComponentActivity() {
                 Log.d("Debug", "Были получены данные $correct")
                 if (correct == "win") {
                     gameOver = true
-                    Log.d("Debug", "Враг выиграл")
-                    launch(Dispatchers.Main) {
-                        showDialog()
-                    }
                 }
                 if (correct == "nobody") {
                     gameOver = true
-                    Log.d("Debug", "Ничья")
-                    launch(Dispatchers.Main) {
-                        showDialog()
-                    }
                 }
 
                 // UI в основном потоке
                 launch(Dispatchers.Main) {
-                    buttons[number.first*3 + number.second].text = if (player_id == 1) "0" else "1"
+                    if (tm) {
+                        tm = false
+                        timer.cancel()
+                    }
+                    //buttons[number.first*3 + number.second].text = if (player_id == 1) "0" else "1"
                     val w: Drawable = if (player_id == 1) {
-                        Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/circle_red")!!
+                        resources.getDrawable(R.drawable.circle_red)
 
                     } else {
-                        Drawable.createFromPath("/home/sarpi/AndroidStudioProjects/lab3-os/app/src/main/res/drawable/circle_red")!!
+                        resources.getDrawable(R.drawable.cross_blue)
                     }
                     buttons[number.first*3 + number.second].background = w
                     enableAllButtons()
@@ -203,6 +202,10 @@ class TicTacToe : ComponentActivity() {
                     tv.text = "Сейчас ход игрока " +
                             if (currentPlayer == player_id + 1)
                                 playerEmail?.removeSuffix("@whatever.ru") else enemyEmail?.removeSuffix("@whatever.ru")
+                    if (gameOver) {
+                        Log.d("Debug", "Враг выиграл")
+                        showDialog()
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -212,12 +215,12 @@ class TicTacToe : ComponentActivity() {
 
     private fun enableAllButtons() {
         for (button in enButtons) {
-            button.setBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    android.R.color.holo_red_light
-                )
-            )
+//            button.setBackgroundColor(
+//                ContextCompat.getColor(
+//                    this,
+//                    android.R.color.holo_red_light
+//                )
+//            )
             button.isEnabled = true
         }
     }
@@ -230,7 +233,7 @@ class TicTacToe : ComponentActivity() {
 
     private fun onButtonClicked(view: View?, id: Int) {
         // TODO: gui @a1sarpi
-        val button = view as Button
+        val button = view as ImageButton
         enButtons.remove(button)
 
         // number
@@ -274,7 +277,14 @@ class TicTacToe : ComponentActivity() {
                 launch(Dispatchers.Main) {
                     Log.d("Debug", "number.first * 3 + number.second = ${number.first * 3 + number.second}")
                     Log.d("Debug", "butt: ${buttons[number.first*3 + number.second]}")
-                    buttons[number.first * 3 + number.second].text = player_id.toString()
+//                    buttons[number.first * 3 + number.second].text = player_id.toString()
+                    val w: Drawable = if (player_id == 1) {
+                        resources.getDrawable(R.drawable.cross_blue)
+
+                    } else {
+                        resources.getDrawable(R.drawable.circle_red)
+                    }
+                    buttons[number.first*3 + number.second].background = w
                     endTurn()
                     startTurn()
                     disableAllButtons()
@@ -390,6 +400,7 @@ class TicTacToe : ComponentActivity() {
     }
 
     fun showDialog() {
+        timer.cancel()
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setMessage("Начать новую игру?")
             .setCancelable(false)
@@ -415,7 +426,7 @@ class TicTacToe : ComponentActivity() {
     @SuppressLint("SetTextI18n")
     private fun resetGame() {
         for (bt in buttons)
-            bt.text = "-"
+            bt.setBackgroundResource(R.drawable.button_background)
         myButtonsId.clear()
         enButtons.clear()
         for (bt in buttons) {
@@ -442,7 +453,7 @@ class TicTacToe : ComponentActivity() {
                             tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
                             waitForOtherPlayer()
                         } else {
-                            tv.text = "Сейчас ход игрока ${playerEmail}"
+                            tv.text = "Сейчас ход игрока ${playerEmail?.removeSuffix("@whatever.ru")}"
                             enableAllButtons()
                         }
                     }
@@ -473,9 +484,11 @@ class TicTacToe : ComponentActivity() {
     private fun exitToMenu() {
         val intent = Intent(this, MenuActivity::class.java)
         startActivity(intent)
-        clientSocket.close()
-        writer.close()
-        reader.close()
+        if (clientSocket.isConnected) {
+            clientSocket.close()
+            writer.close()
+            reader.close()
+        }
         finish() // Закрываем меню после запуска игры
     }
 
@@ -504,8 +517,25 @@ class TicTacToe : ComponentActivity() {
 
 
     private fun handleTimeout() {
-        showDialog()
-        // Логика для обработки проигрыша игрока из-за истечения времени
-        // Например, отобразить сообщение о проигрыше и сбросить игровое состояние
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                if (clientSocket.isConnected) {
+                    if (currentPlayer - 1 != player_id) {
+                        writer.println("111")
+                        writer.flush()
+                    }
+
+                    // Обновляем UI в основном потоке
+                    launch(Dispatchers.Main) {
+                        showDialog()
+                    }
+                } else {
+                    // Обработка ошибки подключения
+                    Log.d("Server", "Failed to connect to the server.")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }

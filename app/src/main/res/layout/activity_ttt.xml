@@ -51,7 +51,7 @@
         <Button
             android:id="@+id/buttonCls"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:backgroundTint="#FFE45E"
             android:fontFamily="@font/zerocool"
             android:text="@string/logout"

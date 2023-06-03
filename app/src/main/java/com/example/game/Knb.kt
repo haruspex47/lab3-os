@@ -6,6 +6,8 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Html
+import android.text.SpannableString
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -30,6 +32,8 @@ import java.io.PrintWriter
 import java.net.Socket
 
 class Knb : ComponentActivity() {
+    private var ewons: Int = 0
+    private var wons: Int = 0
     val GAME_ID = "2"
     private lateinit var buttons: Array<ImageButton>
     private lateinit var buttonCls: Button
@@ -48,8 +52,8 @@ class Knb : ComponentActivity() {
 
     private var round: Int = 3 // !!!
 
-    //private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email
-    private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
+    private var playerEmail: String ? = FirebaseAuth.getInstance().currentUser!!.email
+    //private var playerEmail: String ? = "login${(0..10).random()}" // !!! временно
     private var player_id: Int = -1
 
     private lateinit var enemyEmail: String
@@ -110,7 +114,7 @@ class Knb : ComponentActivity() {
                         }
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTV)
-                        tv.text = "Вы играете с игроком $enemyEmail"
+                        tv.text = "Противник ${enemyEmail.removeSuffix("@whatever.ru")}"
                         enableAllButtons()
                     }
                 } else {
@@ -153,53 +157,77 @@ class Knb : ComponentActivity() {
                 var ans = _ans.toInt()
 
                 if (checkWin(id, ans) == 1) {
-                    Log.d("Debug", "В данной битве пользователь выиграл")
-                    whoWon = 1
+                    Log.d("Debug", "В данной битве пользователь выиграл, round = ${round - 1}")
                     round--
+                    wons++
                     writer.println("win")
                     writer.flush()
                     // TODO: сообщение о победе/ничье (выше) gui @a1sarpi
                     if (round == 0) {
                         gameOver = true
-                        var ans = reader.readLine()
-                        if (ans == "win") {
+                        if (wons > ewons) {
+                            Log.d("Debug", "Мы выиграли!")
                             incrementStats()
+                            writer.println("win")
+                            whoWon = 1
+                            wons = 0; ewons = 0;
+                        } else {
+                            Log.d("Debug", "Мы проиграли!")
+                            writer.println("lose")
+                            whoWon = 2
+                            wons = 0; ewons = 0;
                         }
                     }
                 } else if (checkWin(id, ans) == 0) {
-                    Log.d("Debug", "В данной битве ничья")
-                    whoWon = 0
+                    Log.d("Debug", "В данной битве ничья, round = $round")
                     writer.println("dontwin")
                     writer.flush()
-                } else if (checkWin(id, ans) == -1) {
-                    Log.d("Debug", "В данной битве пользователь проиграл")
-                    whoWon = -1
+                } else if (checkWin(id, ans) == 2) {
+                    Log.d("Debug", "В данной битве пользователь проиграл, round = ${round - 1}")
                     round--
-                    if (round == 0)
-                        gameOver = true
+                    ewons++
                     writer.println("lose")
                     writer.flush()
+                    if (round == 0) {
+                        gameOver = true
+                        if (wons > ewons) {
+                            Log.d("Debug", "Мы выиграли!")
+                            incrementStats()
+                            writer.println("win")
+                            whoWon = 1
+                            wons = 0; ewons = 0;
+                        } else {
+                            Log.d("Debug", "Мы проиграли!")
+                            writer.println("lose")
+                            whoWon = 2
+                            wons = 0; ewons = 0;
+                        }
+                    }
                 }
                 // UI в основном потоке
                 launch(Dispatchers.Main) {
+                    val spannable1 = SpannableString("$wons")
+                    val spannable2 = SpannableString("$ewons")
+                    val coloredText = Html.fromHtml("<font color='#0000FF'>$wons</font>:<font color='#FF0000'>$ewons</font>, Html.FROM_HTML_MODE_LEGACY")
+                    winnerTextView.text = "Игра идёт со счётом $wons:$ewons"
                     if (gameOver) {
+                        Log.d("Debug", "Игра окончена")
                         lateinit var w: Drawable
                         if (whoWon == 1) {
                             w = resources.getDrawable(R.drawable.win)
-                            winnerTextView.setText("{$playerEmail} выиграл")
+                            winnerTextView.setText("${playerEmail?.removeSuffix("@whatever.ru")} выиграл")
                         }
                         else if (whoWon == 0) {
                             w = resources.getDrawable(R.drawable.draw)
                             winnerTextView.setText("Ничья")
                         }
-                        else if (whoWon == -1) {
+                        else if (whoWon == 2) {
+                            Log.d("Debug", "Вошли в функцию проигрыша")
                             w = resources.getDrawable(R.drawable.cross_red)
-                            winnerTextView.setText("{$enemyEmail} выиграл")
+                            winnerTextView.setText("${enemyEmail?.removeSuffix("@whatever.ru")} выиграл")
                         }
                         imageWin.setImageDrawable(w)
-                        Log.d("Debug", "Игра окончена")
                         disableAllButtons()
-                        incrementStats()
                         gameOver = false
                         showDialog()
                     }
@@ -247,7 +275,7 @@ class Knb : ComponentActivity() {
 
     private fun checkWin(me: Int, enemy: Int): Int {
         Log.d("Debug", "Вошли в функцию проверки.")
-        return (enemy - (me % 3))
+        return ((enemy - me + 3) % 3)
     }
 
     fun showDialog() {
@@ -274,6 +302,10 @@ class Knb : ComponentActivity() {
     }
 
     private fun resetGame() {
+        winnerTextView.text = "Игра идёт со счётом 0:0"
+        imageWin.setImageDrawable(null)
+
+        wons = 0; ewons = 0
         round = 3 // !!!
         disableAllButtons()
         gameOver = false

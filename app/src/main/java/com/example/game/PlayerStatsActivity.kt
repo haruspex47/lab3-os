@@ -70,7 +70,7 @@ class PlayerStatsActivity : AppCompatActivity() {
         val currentEmail = currentUser?.email?.removeSuffix("@whatever.ru")
 
         // Отображаем email текущего игрока
-        emailTextView.text = currentEmail
+        emailTextView.text = "Вы: ${currentEmail?.removeSuffix("@whatever.ru")}"
 
 
 //        val usersRef = FirebaseDatabase.getInstance().reference
@@ -111,19 +111,19 @@ class PlayerStatsActivity : AppCompatActivity() {
                 // Создаем ячейку для отображения игры 1
                 val game1Cell = TextView(this@PlayerStatsActivity)
                 val game1Score = currentPlayerStats?.game1Score ?: 0
-                game1Cell.text = "Игра 1: $game1Score"
+                game1Cell.text = "Результат игры крестики-нолики: $game1Score"
                 currentPlayerRow.addView(game1Cell)
 
                 // Создаем ячейку для отображения игры 2
                 val game2Cell = TextView(this@PlayerStatsActivity)
                 val game2Score = currentPlayerStats?.game2Score ?: 0
-                game2Cell.text = "Игра 2: $game2Score"
+                game2Cell.text = "Результат игры КНБ: $game2Score"
                 currentPlayerRow.addView(game2Cell)
 
                 // Создаем ячейку для отображения игры 3
                 val game3Cell = TextView(this@PlayerStatsActivity)
                 val game3Score = currentPlayerStats?.game3Score ?: 0
-                game3Cell.text = "Игра 3: $game3Score"
+                game3Cell.text = "Результат игры ВИКТОРИНА: $game3Score"
                 currentPlayerRow.addView(game3Cell)
 
                 // Добавляем строку в таблицу
@@ -166,18 +166,23 @@ class PlayerStatsActivity : AppCompatActivity() {
         bestPlayerStatsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var bestbest = dataSnapshot.children.first()
                 // Обработка полученных данных самого успешного игрока
                 for (playerSnapshot in dataSnapshot.children) {
                     val email = playerSnapshot.child("email").getValue(String::class.java)
                     val bestPlayerStats = playerSnapshot.child("gameStats").getValue(GameStats::class.java)
                     val game1Score = bestPlayerStats?.game1Score ?: 0
+                    val game2Score = bestPlayerStats?.game2Score ?: 0
+                    val game3Score = bestPlayerStats?.game3Score ?: 0
+                    val gameScore = game1Score + game2Score + game3Score
                     Log.d("Debug", game1Score.toString())
 
                     // Проверяем, является ли текущий игрок лучшим
-                    if (game1Score > bestPlayerScore) {
+                    if (gameScore > bestPlayerScore) {
                         bestPlayerEmail = email ?: ""
-                        bestPlayerScore = game1Score
+                        bestPlayerScore = gameScore
                         Log.d("Debug", "$bestPlayerEmail")
+                        bestbest = playerSnapshot
                     }
                 }
                 //Log.d("Debug", bestPlayerEmail + " " + bestPlayerScore.toInt())
@@ -188,11 +193,11 @@ class PlayerStatsActivity : AppCompatActivity() {
 
 
 //                // Обработка полученных данных самого успешного игрока
-                for (playerSnapshot in dataSnapshot.children) {
-                    val bestPlayerEmail = playerSnapshot.child("email").getValue(String::class.java)
+               // for (playerSnapshot in dataSnapshot.children) {
+                    val bestPlayerEmail = bestbest.child("email").getValue(String::class.java)
                     Log.d("Firebase", "best email: $bestPlayerEmail")
                     val bestPlayerStats =
-                        playerSnapshot.child("gameStats").getValue(GameStats::class.java)
+                        bestbest.child("gameStats").getValue(GameStats::class.java)
                     val bestPlayerGame1Score = bestPlayerStats?.game1Score ?: 0
                     val bestPlayerGame2Score = bestPlayerStats?.game2Score ?: 0
                     val bestPlayerGame3Score = bestPlayerStats?.game3Score ?: 0
@@ -203,25 +208,25 @@ class PlayerStatsActivity : AppCompatActivity() {
                     // Создаем ячейку для отображения лучшего результата игры 1
                     val bestGame1Cell = TextView(this@PlayerStatsActivity)
                     bestGame1Cell.text =
-                        "Лучший результат игры 1: $bestPlayerGame1Score (игрок: $bestPlayerEmail)"
+                        "Результат игры крестики-нолики: $bestPlayerGame1Score"
                     bestPlayerRow.addView(bestGame1Cell)
 
                     // Создаем ячейку для отображения лучшего результата игры 2
                     val bestGame2Cell = TextView(this@PlayerStatsActivity)
                     bestGame2Cell.text =
-                        "Лучший результат игры 2: $bestPlayerGame2Score (игрок: $bestPlayerEmail)"
+                        "Результат игры КНБ: $bestPlayerGame2Score"
                     bestPlayerRow.addView(bestGame2Cell)
 
                     // Создаем ячейку для отображения лучшего результата игры 3
                     val bestGame3Cell = TextView(this@PlayerStatsActivity)
                     bestGame3Cell.text =
-                        "Лучший результат игры 3: $bestPlayerGame3Score (игрок: $bestPlayerEmail)"
+                        "Результат игры ВИКТОРИНА: $bestPlayerGame3Score"
                     bestPlayerRow.addView(bestGame3Cell)
 
                     // Добавляем строку в таблицу
                     topPlayerStatsTableLayout.text = bestGame1Cell.text as String + "\n" + bestGame2Cell.text + "\n" + bestGame3Cell.text
-                }
-                bestPlayerTextView.text = bestPlayerEmail.removeSuffix("@whatever.ru")
+                //}
+                bestPlayerTextView.text = "Лучший игрок: ${bestPlayerEmail?.removeSuffix("@whatever.ru")}"
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
