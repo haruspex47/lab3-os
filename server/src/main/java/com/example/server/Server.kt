@@ -9,7 +9,7 @@ import java.net.Socket
 
 class Server {
     private var _indexes: Array<Int> = arrayOf()
-    private val serverSocket: ServerSocket = ServerSocket(1234)
+    private val serverSocket: ServerSocket = ServerSocket(8080)
     private var guessedNumber: Int = 0
     private var all_players: Array<MutableList<Player>> = arrayOf(
         mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf())
