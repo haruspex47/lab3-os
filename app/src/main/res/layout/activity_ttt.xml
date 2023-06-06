@@ -1,7 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
@@ -9,7 +8,6 @@
 
 
     <LinearLayout
-        android:id="@+id/innerTextButtonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -18,7 +16,6 @@
         android:layout_gravity="top">
 
         <LinearLayout
-            android:id="@+id/onemoreinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -36,7 +33,6 @@
                 android:breakStrategy="simple"/>
 
             <TextView
-                android:id="@+id/welcomeTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/zerocool"
@@ -62,7 +58,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/obshiyLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
@@ -70,7 +65,6 @@
         android:gravity="center">
 
         <LinearLayout
-            android:id="@+id/plaer1Layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -78,7 +72,6 @@
             android:layout_gravity="top">
 
             <ImageView
-                android:id="@+id/circleImageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
@@ -98,7 +91,6 @@
 
         <include
             layout="@layout/buttons_ttt"
-            android:id="@+id/buttonsLayout"
             android:layout_width="350dp"
             android:layout_height="350dp"
             android:layout_marginBottom="60dp"
@@ -106,7 +98,6 @@
             android:layout_marginTop="60dp" />
 
         <LinearLayout
-            android:id="@+id/plaer2andtimeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -114,7 +105,6 @@
             android:layout_gravity="top">
 
             <LinearLayout
-                android:id="@+id/plaer2Layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -122,13 +112,11 @@
                 android:layout_gravity="bottom">
                 <ImageView
                     android:layout_width="60dp"
-                    android:id="@+id/crossImageView"
                     android:layout_height="60dp"
                     android:src="@drawable/cross"
                     app:tint="@color/argblue" />
 
                 <TextView
-                    android:id="@+id/player2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/zerocool"

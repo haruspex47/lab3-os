@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
@@ -194,7 +195,10 @@ class TicTacToe : ComponentActivity() {
                     } else {
                         resources.getDrawable(R.drawable.cross_blue)
                     }
-                    buttons[number.first*3 + number.second].background = w
+                    //buttons[number.first*3 + number.second].background = w
+                    //buttons[number.first*3 + number.second].setImageResource(R.drawable.cross_blue)
+                    val iv: ImageView = findViewById(R.id.imageView)
+                    iv.setImageResource(R.drawable.cross_blue)
                     enableAllButtons()
                     // Смена текущего игрока
                     currentPlayer = if (currentPlayer == 1) 2 else 1
@@ -490,6 +494,7 @@ class TicTacToe : ComponentActivity() {
             writer.close()
             reader.close()
         }
+        timer.cancel()
         finish() // Закрываем меню после запуска игры
     }
 
