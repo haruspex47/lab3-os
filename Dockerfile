@@ -7,7 +7,7 @@ RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed jdk8-openjdk kotli
 # # Используйте образ с предустановленными JDK и Kotlin
 # FROM adoptopenjdk/openjdk8:latest
 
-ENV DOMAIN=$DOMAIN
+#ENV DOMAIN=$DOMAIN
 
 # Установка рабочей директории внутри контейнера
 WORKDIR /app

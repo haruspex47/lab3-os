@@ -86,8 +86,8 @@ class Knb : ComponentActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 Log.d("Server", "Пытаемся подключиться к серверу")
-                val serverAddress = "10.0.2.2" // IP-адрес сервера
-                val serverPort = 1234 // Порт сервера
+                val serverAddress = "82.146.53.81" // IP-адрес сервера
+                val serverPort = 4747 // Порт сервера
 
                 clientSocket = Socket(serverAddress, serverPort)
                 if (clientSocket.isConnected) {
