@@ -6,7 +6,7 @@ import android.widget.Button
 import androidx.appcompat.widget.AppCompatButton
 
 class CustomButton {
-    var bt: Button
+    var bt: Button?
 
     private var row: Int = -1
     private var column: Int = -1
@@ -14,6 +14,7 @@ class CustomButton {
 
     var status: Int // принимает значения -1, 0 и 1 в зависимости от принадлежности точки
 
+    constructor() { status = 0; bt = null}
     constructor(_bt: Button, ids: Pair<Int, Int>, _status: Int = 0)  {
         bt = _bt
 

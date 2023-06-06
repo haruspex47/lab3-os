@@ -218,7 +218,7 @@ class Knb : ComponentActivity() {
                             winnerTextView.setText("${playerEmail?.removeSuffix("@whatever.ru")} выиграл")
                         }
                         else if (whoWon == 0) {
-                            w = resources.getDrawable(R.drawable.draw)
+                            //w = resources.getDrawable(R.drawable.draw)
                             winnerTextView.setText("Ничья")
                         }
                         else if (whoWon == 2) {

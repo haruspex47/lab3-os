@@ -98,7 +98,7 @@ class Quiz : AppCompatActivity() {
         buttons.add(_castle2But) // добавляем именно здесь
 
         for (butt in buttons)
-            butt.bt.isEnabled = false
+            butt.bt?.isEnabled = false
 //        enableButtons(myCastle.getNeighbors())
 //        disableAllButtons()
         //TODO: gui @a1sarpi
@@ -506,7 +506,7 @@ class Quiz : AppCompatActivity() {
                         "Debug",
                         "Будем трогать кнопку $buttonsId, поскольку нет моих соседей"
                     )
-                    getButton(buttonsId).bt.isEnabled = false
+                    getButton(buttonsId).bt?.isEnabled = false
                     enButtons.remove(getButton(buttonsId))
                 }
         }
@@ -515,23 +515,23 @@ class Quiz : AppCompatActivity() {
     private fun disableAllButtons() {
         enButtons.clear()
         for (button in buttons) {
-            if (button.bt.isEnabled == true)
+            if (button.bt?.isEnabled == true)
                 enButtons.add(button)
-            button.bt.isEnabled = false
+            button.bt?.isEnabled = false
         }
     }
 
     private fun enableAllButtons() {
         for (button in enButtons) {
             if (button.status != 1)
-                button.bt.isEnabled = true
+                button.bt?.isEnabled = true
         }
     }
 
     private fun enableButtons(ids: MutableList<Pair<Int, Int>>) {
         for (buttonsId in ids) {
             if (getButton(buttonsId).status != 1) {
-                getButton(buttonsId).bt.isEnabled = true
+                getButton(buttonsId).bt?.isEnabled = true
                 enButtons.add(getButton(buttonsId))
             } else if (enButtons.contains(getButton(buttonsId)))
                 enButtons.remove(getButton(buttonsId))
@@ -722,7 +722,7 @@ class Quiz : AppCompatActivity() {
         enButtons.clear()
         // TODO: ожидание сервера @a1sarpi
         for (bt in buttons) {
-            bt.bt.isEnabled = false
+            bt.bt?.isEnabled = false
             bt.status = 0
         }
         gameOver = false
