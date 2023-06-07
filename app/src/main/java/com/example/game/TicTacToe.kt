@@ -195,7 +195,7 @@ class TicTacToe : ComponentActivity() {
                     } else {
                         resources.getDrawable(R.drawable.cross_blue)
                     }
-                    //buttons[number.first*3 + number.second].background = w
+                    buttons[number.first*3 + number.second].background = w
                     //buttons[number.first*3 + number.second].setImageResource(R.drawable.cross_blue)
                     val iv: ImageView = findViewById(R.id.imageView)
                     iv.setImageResource(R.drawable.cross_blue)
