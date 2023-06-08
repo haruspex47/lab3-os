@@ -43,10 +43,10 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 //        animationView?.setAnimation(R.raw.tumbnail)
 //        animationView?.playAnimation()
 
-        val playButton: Button = findViewById(R.id.playButton)
-        playButton.setOnClickListener {
-            startGameNull()
-        }
+//        val playButton: Button = findViewById(R.id.playButton)
+//        playButton.setOnClickListener {
+//            startGameNull()
+//        }
 
         val quizButton: Button = findViewById(R.id.quizButton)
         quizButton.setOnClickListener {
@@ -129,11 +129,11 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 //            }
 //        }
 
-        val debugButton: Button = findViewById(R.id.debugButton)
-        debugButton.setOnClickListener {
-            // Получаем ссылку на базу данных Firebase
-//            createDB()
-        }
+//        val debugButton: Button = findViewById(R.id.debugButton)
+//        debugButton.setOnClickListener {
+//            // Получаем ссылку на базу данных Firebase
+////            createDB()
+//        }
 
 //        // Запись статистики игры пользователя
 //        val gameStatsRef = database.child("users").child(auth.currentUser?.uid ?: "").child("gameStats")
@@ -198,12 +198,12 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private fun startGameNull() {
-        Log.d("Debug", "Вход в игру 'Угадай число'!")
-        val intent = Intent(this, GameNull::class.java)
-        startActivity(intent)
-        finish() // Закрываем меню после запуска игры
-    }
+//    private fun startGameNull() {
+//        Log.d("Debug", "Вход в игру 'Угадай число'!")
+//        val intent = Intent(this, GameNull::class.java)
+//        startActivity(intent)
+//        finish() // Закрываем меню после запуска игры
+//    }
 
     private fun startQuiz() {
         Log.d("Debug", "Вход в игру 'Викторина'!")

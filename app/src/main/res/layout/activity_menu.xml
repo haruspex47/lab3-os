@@ -21,13 +21,13 @@
         android:textSize="35sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/playButton"
-        android:fontFamily="@font/zerocool"
-        android:backgroundTint="#FFE45E"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Играть!" />
+<!--    <Button-->
+<!--        android:id="@+id/playButton"-->
+<!--        android:fontFamily="@font/zerocool"-->
+<!--        android:backgroundTint="#FFE45E"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Играть!" />-->
     <Button
         android:id="@+id/quizButton"
         android:layout_width="wrap_content"
@@ -48,24 +48,24 @@
         android:id="@+id/knbButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Играть в КНБ!"
+        android:text="Играть в суефа!"
         android:fontFamily="@font/zerocool"
         android:backgroundTint="#FFE45E"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="login!"
-        android:fontFamily="@font/zerocool"
-        android:backgroundTint="#FFE45E"/>
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="login!"-->
+<!--        android:fontFamily="@font/zerocool"-->
+<!--        android:backgroundTint="#FFE45E"/>-->
 
-    <Button
-        android:id="@+id/debugButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="debug!"
-        android:fontFamily="@font/zerocool"
-        android:backgroundTint="#FFE45E"/>
+<!--    <Button-->
+<!--        android:id="@+id/debugButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="debug!"-->
+<!--        android:fontFamily="@font/zerocool"-->
+<!--        android:backgroundTint="#FFE45E"/>-->
 
     <Button
         android:id="@+id/playerStatsButton"
