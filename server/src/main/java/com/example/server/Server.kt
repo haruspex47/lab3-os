@@ -31,13 +31,13 @@ class Server {
 //            else {
 //                println("Один из игроков присоединился дважды")
 //            }
-            for (pl in all_players[player.gm.id]) {
-                if (!pl.clientSocket.isConnected or pl.clientSocket.isClosed) {
-                    println("Один из игроков отсоединился")
-                    all_players[player.gm.id].remove(pl)
-                    println("Размер очереди стал равным ${all_players[player.gm.id].size}")
-                }
-            }
+//            for (pl in all_players[player.gm.id]) {
+//                if (!pl.clientSocket.isConnected or pl.clientSocket.isClosed) {
+//                    println("Один из игроков отсоединился")
+//                    all_players[player.gm.id].remove(pl)
+//                    println("Размер очереди стал равным ${all_players[player.gm.id].size}")
+//                }
+//            }
             check_queue(player.gm.id, true)
         }
     }
