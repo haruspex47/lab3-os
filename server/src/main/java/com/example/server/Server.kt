@@ -23,20 +23,20 @@ class Server {
             val clientSocket = serverSocket.accept()
             println("Произведено новое подключение к серверу")
             val player = Player(clientSocket)
-            if (all_players[player.gm.id].isEmpty())
-                all_players[player.gm.id].add(player)
-            else if (all_players[player.gm.id].first().email != player.email)
-                all_players[player.gm.id].add(player)
-            else {
-                println("Один из игроков присоединился дважды")
-            }
-            for (pl in all_players[player.gm.id]) {
-                if (!pl.clientSocket.isConnected or pl.clientSocket.isClosed) {
-                    println("Один из игроков отсоединился")
-                    all_players[player.gm.id].remove(pl)
-                    println("Размер очереди стал равным ${all_players[player.gm.id].size}")
-                }
-            }
+//            if (all_players[player.gm.id].isEmpty())
+//                all_players[player.gm.id].add(player)
+//            else if (all_players[player.gm.id].first().email != player.email)
+//                all_players[player.gm.id].add(player)
+//            else {
+//                println("Один из игроков присоединился дважды")
+//            }
+//            for (pl in all_players[player.gm.id]) {
+//                if (!pl.clientSocket.isConnected or pl.clientSocket.isClosed) {
+//                    println("Один из игроков отсоединился")
+//                    all_players[player.gm.id].remove(pl)
+//                    println("Размер очереди стал равным ${all_players[player.gm.id].size}")
+//                }
+//            }
             check_queue(player.gm.id, true)
         }
     }
@@ -44,16 +44,16 @@ class Server {
     private fun check_queue(game_id: Int, flag: Boolean): Boolean {
         println("Запущена проверка очереди. Размер очереди (должен быть 2): ${all_players[game_id].size}")
         if (all_players[game_id].size == 2) {
-            for (pl in all_players[game_id]) {
-                if (!pl.clientSocket.isConnected or pl.clientSocket.isClosed) {
-                    println("Один из игроков отсоединился")
-                    all_players[game_id].remove(pl)
-                    println("Размер очереди стал равным ${all_players[game_id].size}")
-                    return false
-                }
-            }
-            if (all_players[game_id].first().email == all_players[game_id][2].email)
-                return false
+//            for (pl in all_players[game_id]) {
+//                if (!pl.clientSocket.isConnected or pl.clientSocket.isClosed) {
+//                    println("Один из игроков отсоединился")
+//                    all_players[game_id].remove(pl)
+//                    println("Размер очереди стал равным ${all_players[game_id].size}")
+//                    return false
+//                }
+//            }
+//            if (all_players[game_id].first().email == all_players[game_id][2].email)
+//                return false
             val (p1, p2) = Pair(all_players[game_id][0], all_players[game_id][1])
             all_players[game_id].clear()
             println("Игрок ${p1.id} с почтой ${p2.email} подключился")

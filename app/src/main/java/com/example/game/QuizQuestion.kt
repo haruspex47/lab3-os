@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -31,6 +32,7 @@ class QuizQuestion : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_quiz_question)
 
         Log.d("Debug", "Запущен класс QuizQuestion")

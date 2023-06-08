@@ -81,6 +81,10 @@ class Knb : ComponentActivity() {
             buttons[i].setOnClickListener {view -> onButtonClicked(view, i) }
         }
 
+        buttonCls.setOnClickListener {
+            exitToMenu();
+        }
+
         disableAllButtons()
         // TODO: загрузка сервера - фронтенд @a1sarpi
         GlobalScope.launch(Dispatchers.IO) {
@@ -109,9 +113,6 @@ class Knb : ComponentActivity() {
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
                         // TODO: конец ожидания сервера (фронтенд) @a1sarpi
-                        buttonCls.setOnClickListener {
-                            exitToMenu();
-                        }
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTV)
                         tv.text = "Противник ${enemyEmail.removeSuffix("@whatever.ru")}"
@@ -352,9 +353,11 @@ class Knb : ComponentActivity() {
     private fun exitToMenu() {
         val intent = Intent(this, MenuActivity::class.java)
         startActivity(intent)
-        clientSocket.close()
-        writer.close()
-        reader.close()
+        if (clientSocket.isConnected) {
+            clientSocket.close()
+            writer.close()
+            reader.close()
+        }
         finish() // Закрываем меню после запуска игры
     }
 

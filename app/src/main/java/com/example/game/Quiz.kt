@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
 import android.widget.Button
 import android.widget.GridLayout
 import android.widget.TextView
@@ -62,6 +63,7 @@ class Quiz : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         Log.d("Debug", "Вошли в класс Quiz!")
         setContentView(R.layout.activity_quiz)
 
@@ -80,6 +82,10 @@ class Quiz : AppCompatActivity() {
 
         castle2But.setOnClickListener {
             onButtonClick(Pair<Int, Int>(MAX_ROW, 1))
+        }
+
+        buttonCls.setOnClickListener {
+            exitToMenu();
         }
 
         // Настройка обработчиков нажатия для кнопок в сетке
@@ -142,9 +148,6 @@ class Quiz : AppCompatActivity() {
                     // Обновляем UI в основном потоке
                     launch(Dispatchers.Main) {
                         // TODO: конец ожидания сервера (фронтенд) @a1sarpi
-                        buttonCls.setOnClickListener {
-                            exitToMenu();
-                        }
                         currentPlayer = 1
                         tv = findViewById(R.id.currentPlayerTV)
 
@@ -472,9 +475,11 @@ class Quiz : AppCompatActivity() {
     private fun exitToMenu() {
         val intent = Intent(this, MenuActivity::class.java)
         startActivity(intent)
-        clientSocket.close()
-        writer.close()
-        reader.close()
+        if (clientSocket.isConnected) {
+            clientSocket.close()
+            writer.close()
+            reader.close()
+        }
         finish() // Закрываем меню после запуска игры
     }
 
