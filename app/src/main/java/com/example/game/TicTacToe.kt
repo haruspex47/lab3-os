@@ -108,8 +108,8 @@ class TicTacToe : ComponentActivity() {
         // TODO: загрузка сервера - фронтенд @a1sarpi
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val serverAddress = "10.0.2.2" // IP-адрес сервера
-                //val serverAddress = "plasmaa0.fvds.ru"// IP-адрес сервера
+                //val serverAddress = "10.0.2.2" // IP-адрес сервера
+                val serverAddress = "plasmaa0.fvds.ru"// IP-адрес сервера
                 val serverPort = 4747 // Порт сервера
 
                 clientSocket = Socket(serverAddress, serverPort)
