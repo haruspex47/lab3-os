@@ -23,6 +23,7 @@ class Server {
             val clientSocket = serverSocket.accept()
             println("Произведено новое подключение к серверу")
             val player = Player(clientSocket)
+            all_players[player.gm.id].add(player)
 //            if (all_players[player.gm.id].isEmpty())
 //                all_players[player.gm.id].add(player)
 //            else if (all_players[player.gm.id].first().email != player.email)
