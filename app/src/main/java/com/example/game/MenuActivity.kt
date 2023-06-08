@@ -44,7 +44,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 //        animationView?.playAnimation()
 
 //        val playButton: Button = findViewById(R.id.playButton)
-//        playButton.setOnClickListener {
+//        playButton.setOnClickLКНБistener {
 //            startGameNull()
 //        }
 
