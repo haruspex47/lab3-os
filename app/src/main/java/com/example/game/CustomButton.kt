@@ -3,6 +3,7 @@ package com.example.game
 import android.content.Context
 import android.util.Log
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 
 class CustomButton {

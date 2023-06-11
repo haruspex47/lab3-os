@@ -36,10 +36,6 @@
             android:exported="false"
             android:theme="@style/Theme.MyGame" />
         <activity
-            android:name=".CustomButton"
-            android:exported="false"
-            android:theme="@style/Theme.MyGame" />
-        <activity
             android:name=".Register"
             android:exported="true"
             android:theme="@style/Theme.Material3.Light.NoActionBar">
@@ -59,13 +55,13 @@
             android:label="@string/title_activity_menu"
             android:theme="@style/Theme.MyGame">
         </activity>
-        <activity
-            android:name=".GameNull"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="game" />
-        </activity>
+<!--        <activity-->
+<!--            android:name=".GameNull"-->
+<!--            android:exported="true">-->
+<!--            <meta-data-->
+<!--                android:name="android.app.lib_name"-->
+<!--                android:value="game" />-->
+<!--        </activity>-->
         <activity
             android:name=".Quiz"
             android:exported="true"

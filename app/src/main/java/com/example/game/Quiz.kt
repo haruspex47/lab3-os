@@ -60,12 +60,17 @@ class Quiz : AppCompatActivity() {
     private lateinit var myCastle: CustomButton
     private lateinit var enemyCastle: CustomButton
 
+//    val database = FirebaseDatabase.getInstance()
+//    val myRef = database.reference
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         Log.d("Debug", "Вошли в класс Quiz!")
         setContentView(R.layout.activity_quiz)
+
+        allQuestionsInit()
 
         buttonCls = findViewById(R.id.buttonCls)
 
@@ -112,7 +117,8 @@ class Quiz : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val serverAddress = "82.146.53.81" // IP-адрес сервера
+                val serverAddress = "10.0.2.2" // IP-адрес сервера
+                //val serverAddress = "82.146.53.81" // IP-адрес сервера
                 val serverPort = 4747 // Порт сервера
 
                 clientSocket = Socket(serverAddress, serverPort)
@@ -154,7 +160,8 @@ class Quiz : AppCompatActivity() {
 
                         if (player_id != 0) {
                             // Через сервер ждём ответ другого игрока
-                            tv.text = "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
+                            tv.text =
+                                "Сейчас ход игрока ${enemyEmail?.removeSuffix("@whatever.ru")}"
                             for (bt in myCastle.getNeighbors()) {
                                 if (getButton(bt).status != 1)
                                     enButtons.add(getButton(bt))
@@ -174,135 +181,36 @@ class Quiz : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        allQuestionsInit()
     }
 
     private fun allQuestionsInit() {
-        enableDuelQue = arrayOf(
-            Question(
-                "Какой русский писатель является автором романа \"Война и мир\"?",
-                arrayOf("Лев Толстой", "Фёдор Достоевский", "Антон Чехов", "Иван Тургенев"),
-                0
-            )
-        ,
-            Question(
-                "Какое произведение Фёдора Достоевского начинается со слов: \"В начале июля, в чрезвычайно жаркое время, под вечер, один молодой человек вышел из своей каморки, которую нанимал от жильцов в С-м переулке, на улицу и медленно, как бы в нерешимости, отправился к К-ну мосту\"?",
-                arrayOf("Преступление и наказание", "Идиот", "Бесы", "Братья Карамазовы"),
-                0
-            )
-        ,
-            Question(
-                "Кто из этих писателей является автором произведения \"Мёртвые души\"?",
-                arrayOf("Николай Гоголь", "Михаил Лермонтов", "Иван Гончаров", "Александр Пушкин"),
-                0
-            )
-                    ,
-            Question(
-                "Какая формула определяет комплексную экспоненту?",
-                arrayOf("e^(i*x)", "sin(x)", "cos(x)", "ln(x)"),
-                0
-            )
-        )
-        enableQue.add(
-            Question(
-                "Какая функция является гармонической?",
-                arrayOf(
-                    "f(z) = u(x, y) + i*v(x, y)",
-                    "f(z) = u(x, y) - i*v(x, y)",
-                    "f(z) = u(x, y) * v(x, y)",
-                    "f(z) = u(x, y) / v(x, y)"
-                ),
-                0
-            )
-        )
-        enableQue.add(
-            Question(
-                "Какой оператор используется для определения интеграла по контуру?",
-                arrayOf("∮", "∫", "∂", "∇"),
-                0
-            )
-        )
-        enableQue.add(
-            Question(
-                "Что такое принцип максимума модуля?",
-                arrayOf(
-                    "Если f(z) голоморфна в ограниченной и замкнутой области, то |f(z)| достигает своего максимума на границе области.",
-                    "Если f(z) голоморфна во всей комплексной плоскости, то |f(z)| неограничена.",
-                    "Если f(z) является гармонической функцией, то |f(z)| неотрицательна.",
-                    "Если f(z) аналитична в точке z_0, то |f(z)| имеет непрерывную производную в этой точке."
-                ),
-                0
-            )
-        )
-        enableQue.add(
-            Question(
-                "Что такое сопряженное пространство в функциональном анализе?",
-                arrayOf(
-                    "Для банахова пространства X, сопряженным пространством X* является пространство линейных непрерывных функционалов на X.",
-                    "Сопряженным пространством является пространство функций, у которых все производные равны нулю.",
-                    "Сопряженным пространством является пространство функций, у которых интегралы равны нулю.",
-                    "Сопряженным пространством является пространство функций, у которых все точки являются особенностями."
-                ),
-                0
-            )
-        )
-        enableQue.add(
-            Question(
-                "Что такое компактный оператор?",
-                arrayOf(
-                    "Оператор, переводящий ограниченное множество в предкомпактное.",
-                    "Оператор, переводящий компактное множество в ограниченное.",
-                    "Оператор, переводящий предкомпактное множество в компактное.",
-                    "Оператор, переводящий ограниченное множество в компактное."
-                ),
-                0 // 2
-            )
-        )
-        enableQue.add(
-            Question(
-                "Какая теорема устанавливает связь между дифференцируемостью и голоморфностью функции?",
-                arrayOf("Теорема Коши-Римана", "Теорема Римана", "Теорема Коши", "Теорема Дарбу"),
-                0
-            )
-        )
-        enableQue.add(
-            Question(
-                "Какое условие должно выполняться для функции, чтобы она была аналитической в точке?",
-                arrayOf(
-                    "Функция должна быть дифференцируемой в окрестности данной точки.",
-                    "Функция должна быть непрерывной в окрестности данной точки.",
-                    "Функция должна быть голоморфной в окрестности данной точки.",
-                    "Функция должна быть гармонической в окрестности данной точки."
-                ),
-                0
-            )
-        )
-        enableQue.add(
-            Question(
-                "Что такое функционал в функциональном анализе?",
-                arrayOf(
-                    "Линейный оператор, переводящий векторное пространство в скаляры.",
-                    "Линейный оператор, переводящий скаляры в векторное пространство.",
-                    "Функция, отображающая векторное пространство в скаляры.",
-                    "Функция, отображающая скаляры в векторное пространство."
-                ),
-                0 // 2
-            )
-        )
-        enableQue.add(
-            Question(
-                "Что такое базис в функциональном анализе?",
-                arrayOf(
-                    "Семейство элементов, линейная комбинация которых может представлять любой элемент векторного пространства.",
-                    "Семейство элементов, для которых выполняется равенство f(x) = 0.",
-                    "Семейство элементов, для которых выполняется неравенство f(x) > 0.",
-                    "Семейство элементов, линейная комбинация которых равна нулю."
-                ),
-                0
-            )
-        )
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.reference
+        Log.d("Debug", "Вошли в метод инициализации вопросов")
+        val db = myRef.child("questions")
+        db.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    val question = snapshot.getValue(Question2::class.java)
+                    if (question != null) {
+                        //Log.d("Debug", "полученный вопрос: $question")
+                        val que = Question(question.que,
+                            arrayOf<String>(question.ans1, question.ans2, question.ans3, question.ans4),
+                            question.correctAnswerIndex)
+                        enableQue.add(que)
+                        Log.d("Debug", "появился новый вопрос: ${que.que}")
+                    }
+                }
+                enableDuelQue = enableQue.toTypedArray()
+                enableQue.shuffle()
+                Log.d("Debug", "первый дуэльный вопрос: ${enableDuelQue.first().que}")
+                // TODO: Используйте список enableQue, содержащий вопросы из базы данных.
+            }
 
-        enableQue.shuffle()
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("Debug", "Failed to read value.", error.toException())
+            }
+        })
     }
 
     private fun waitForOtherPlayer() {
@@ -827,6 +735,11 @@ class Quiz : AppCompatActivity() {
     }
 
 }
+
+data class Question2(val ans1: String="", val ans2: String="", val ans3: String="", val ans4: String="",
+                    val correctAnswerIndex: Int = -111,
+                    val que: String = ""
+)
 
 class Question(val que: String, val ans: Array<String>, val correctAnswerIndex: Int) {
     var correct: Boolean = false
