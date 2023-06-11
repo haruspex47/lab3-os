@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "181431514346",
+    "firebase_url": "https://lab3-game-os-default-rtdb.firebaseio.com",
     "project_id": "lab3-game-os",
     "storage_bucket": "lab3-game-os.appspot.com"
   },
